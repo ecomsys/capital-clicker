@@ -1,0 +1,142 @@
+{
+  "prizes": {
+    "money": [
+      {
+        "id": "cash_10",
+        "type": "money",
+        "title": "10 ₽",
+        "icon": "/images/webp/cash/cash_10.webp",
+        "value": 10,
+        "locked": false
+      },
+      {
+        "id": "cash_100",
+        "type": "money",
+        "title": "100 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100,
+        "locked": false
+      },
+      {
+        "id": "cash_1000",
+        "type": "money",
+        "title": "1 000 ₽",
+        "icon": "/images/webp/cash/cash_1000.webp",
+        "value": 1000,
+        "locked": false
+      },
+      {
+        "id": "cash_10000",
+        "type": "money",
+        "title": "10 000 ₽",
+        "icon": "/images/webp/cash/cash_10000.webp",
+        "value": 10000,
+        "locked": false
+      },
+      {
+        "id": "cash_100000",
+        "type": "money",
+        "title": "100 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cash_1000000",
+        "type": "money",
+        "title": "1 000 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 1000000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cash_10000000",
+        "type": "money",
+        "title": "10 000 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 10000000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cash_100000000",
+        "type": "money",
+        "title": "100 000 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100000000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cash_1000000000",
+        "type": "money",
+        "title": "1 000 000 000 ₽",
+        "icon": "",
+        "value": 1000000000,
+        "locked": true,
+        "fullWidth": true
+      }
+    ],
+    "gifts": [
+      {
+        "id": "fen-dyson",
+        "type": "gift",
+        "title": "Фен DYSON",
+        "icon": "/images/webp/prizes/fen-dyson.webp",
+        "locked": false
+      },
+      {
+        "id": "dji-mavic",
+        "type": "gift",
+        "title": "DJI MAVIC",
+        "icon": "/images/webp/prizes/dj-mavik.webp",
+        "locked": false
+      },
+      {
+        "id": "elektro-skate",
+        "type": "gift",
+        "title": "Электроскейт",
+        "icon": "/images/webp/prizes/elektro-skate.webp",
+        "locked": false
+      },
+      {
+        "id": "masage-capsule",
+        "type": "gift",
+        "title": "Массажная капсула",
+        "icon": "/images/webp/prizes/masage-capsule.webp",
+        "locked": false
+      }
+    ],
+    "certificates": [
+      {
+        "id": "cert_100000",
+        "type": "certificate",
+        "title": "100 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cert_500000",
+        "type": "certificate",
+        "title": "500 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 500000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+      {
+        "id": "cert_1000000000",
+        "type": "certificate",
+        "title": "1 000 000 000 ₽",
+        "icon": "",
+        "value": 1000000000,
+        "locked": true,
+        "fullWidth": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "wheel": [
+  {
+        "id": "cash_10",
+        "type": "money",
+        "title": "10 ₽",
+        "icon": "/images/webp/cash/cash_10.webp",
+        "value": 10,
+        "locked": false
+      },
+        {
+        "id": "fen-dyson",
+        "type": "gift",
+        "title": "Фен DYSON",
+        "icon": "/images/webp/prizes/fen-dyson.webp",
+        "locked": false
+      },
+    {
+        "id": "cert_100000",
+        "type": "certificate",
+        "title": "100 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+     {
+        "id": "masage-capsule",
+        "type": "gift",
+        "title": "Массажная капсула",
+        "icon": "/images/webp/prizes/masage-capsule.webp",
+        "locked": false
+      },
+      {
+        "id": "cash_100000",
+        "type": "money",
+        "title": "100 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 100000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+       {
+        "id": "elektro-skate",
+        "type": "gift",
+        "title": "Электроскейт",
+        "icon": "/images/webp/prizes/elektro-skate.webp",
+        "locked": false
+      },
+      {
+        "id": "cash_10000000",
+        "type": "money",
+        "title": "10 000 000 ₽",
+        "icon": "/images/webp/cash/cash_100.webp",
+        "value": 10000000,
+        "locked": true,
+        "unlockCondition": "invite_friend"
+      },
+       {
+        "id": "dji-mavic",
+        "type": "gift",
+        "title": "DJI MAVIC",
+        "icon": "/images/webp/prizes/dj-mavik.webp",
+        "locked": false
+      }
+  ]
+}
