@@ -159,9 +159,8 @@ export default function Wheel({ prizes, onWin, className }) {
     // 1. Выключаем конфетти
     setShowConfetti(false);
     // 2. Через мизерное время включаем – React пересоздаст Confetti и анимация начнётся заново
-    setTimeout(() => setShowConfetti(true), 20);
-    // 3. Автоматически выключаем через 3 секунды, чтобы не мешать при следующем кручении
-    setTimeout(() => setShowConfetti(false), 6000);
+    setTimeout(() => setShowConfetti(true), 50);
+
 
 
       // Открываем модалку с результатом
@@ -247,6 +246,7 @@ export default function Wheel({ prizes, onWin, className }) {
           width={width}
           height={height}
           numberOfPieces={300}
+          className="z-100"
           recycle={false}
           gravity={0.2}
           colors={["#FFD700", "#FFA500", "#FF4500", "#FFFFFF", "#00FF00"]}

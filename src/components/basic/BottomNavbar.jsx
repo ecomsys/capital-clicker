@@ -1,9 +1,11 @@
 // src/components/basic/BottomNavbar.jsx
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useFullscreen } from "@/hooks/useFullscreen"; 
 
 export default function BottomNavbar() {
   const location = useLocation();
+   const { isFullscreen, openFullscreen } = useFullscreen();
 
   const navItems = [
     { to: "/home", icon: "home", label: "Главная" },
@@ -22,6 +24,14 @@ export default function BottomNavbar() {
     "max-w-[46.625rem]"
   );
 
+    const handleLinkClick = () => {
+    // Вызываем полный экран только если мы еще не в нем, 
+    // чтобы избежать лишних вызовов API
+    if (!isFullscreen) {
+      openFullscreen();
+    }
+  };
+
   return (
     <nav className={navbarClasses}
       role="navigation"
@@ -35,6 +45,7 @@ export default function BottomNavbar() {
           <NavLink
             key={item.to}
             to={item.to}
+             onClick={handleLinkClick}
             className={`flex-1 flex flex-col items-center justify-center gap-1 lg:gap-1.5 py-2 transition-all duration-200
             ${isActive ? "text-golden" : "text-navbarlink hover:text-gray-200"}`}
             aria-current={isActive ? "page" : undefined}

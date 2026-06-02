@@ -8,7 +8,7 @@ export default function EmptyClansState({ className }) {
       className={cn("flex flex-col w-full items-center justify-center text-center", className)}
     >
       {/* Картинка с aspect-ratio 516/260 */}
-      <div className="mt-16 mb-8 sm:my-16 w-full max-w-[42rem] aspect-[516/260] mx-auto">
+      <div className="mt-8 mb-8 sm:my-16 w-full max-w-[42rem] aspect-[516/260] mx-auto">
         <img
           src="/images/webp/sand-clock.webp"
           alt="Нет кланов"

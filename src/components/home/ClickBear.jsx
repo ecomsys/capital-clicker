@@ -16,7 +16,7 @@ export default function ClickBear({ onClick, percent = 0, prize }) {
   return (
     <div className="relative cursor-pointer transition-transform active:scale-95 inline-block" onClick={onClick}>
       <div className="relative w-full  mx-auto overflow-visible
-      min-w-[9rem] w-[69vw] max-w-[16.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[33vh] lg:max-w-[21.5rem] cursor-pointer transition-transform active:scale-95
+      min-w-[9rem] w-[69vw] max-w-[13.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[33vh] lg:max-w-[21.5rem] cursor-pointer transition-transform active:scale-95
       ">
         <img 
           src="/images/webp/level-bears/level-1.webp" 

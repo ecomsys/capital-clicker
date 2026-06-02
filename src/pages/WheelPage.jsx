@@ -68,7 +68,7 @@ export default function WheelPage({
   }
 
   return (
-    <main className="min-h-screen flex flex-col pb-20 lg:pb-40 ">
+    <main className="min-h-screen flex flex-col pb-26+ lg:pb-40 ">
       {/* Верхняя часть — фиксированная высота, чтобы не прыгало */}
       <header className="flex-shrink-0 pt-3 sm:pt-4 lg:pt-6 px-3">
         <AdBanner {...adBanner} className="mb-2 sm:mb-3" />

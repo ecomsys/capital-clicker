@@ -1,6 +1,7 @@
 // src/hooks/useFullscreen.js
 import { useState, useEffect, useCallback } from "react";
 
+
 export function useFullscreen(mobileOnly = true) {
   const [isFullscreen, setIsFullscreen] = useState(
     Boolean(document.fullscreenElement)
