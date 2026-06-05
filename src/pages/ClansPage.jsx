@@ -4,17 +4,10 @@ import { AdBanner } from "@/components/basic/adBanner";
 import { GlassMessage } from "@/components/basic/GlassMessage";
 import EmptyClansState from "@/components/clans/EmptyClansState";
 
-export default function ClansPage({
-  adBanner = {
-    href: "https://example.com",
-    imageSrc: null,
-    title: "РЕКЛАМА",
-  },
-  winner = {
-    name: "Иван",
-    win: "1000",
-  },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner, lastWinner } from "@/constants/honeyPot.site.js";
+
+export default function ClansPage() {
   // Временное состояние для демонстрации
   // Позже заменишь на реальные данные из store/API
   const [clansList] = useState([]); // [] - пусто, показываем заглушку
@@ -34,8 +27,8 @@ export default function ClansPage({
 
       <GlassMessage className="font-bold text-center">
         <span>
-          <span className="text-golden">{winner.name}</span> выиграл{" "}
-          {winner.win} <span>рублей</span>
+          <span className="text-golden">{lastWinner.name}</span> выиграл{" "}
+          {lastWinner.win} <span>рублей</span>
         </span>
       </GlassMessage>
 

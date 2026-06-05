@@ -3,18 +3,12 @@ import { useState } from "react";
 import { AdBanner } from "@/components/basic/adBanner";
 import { GlassMessage } from "@/components/basic/GlassMessage";
 import EmptyFriendsState from "@/components/friends/EmptyFriendsState";
+import { Button } from "@/components/ui/Button";
 
-export default function FriendsPage({
-  adBanner = {
-    href: "https://example.com",
-    imageSrc: null,
-    title: "РЕКЛАМА",
-  },
-  winner = {
-    name: "Иван",
-    win: "1000",
-  },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner, lastWinner } from "@/constants/honeyPot.site.js";
+
+export default function FriendsPage() {
   // Временное состояние для демонстрации
   // Позже заменишь на реальные данные из store/API
   const [friendsList] = useState([]); // [] - пусто, показываем заглушку
@@ -24,7 +18,7 @@ export default function FriendsPage({
 
   return (
     // add min-h-[inherit] for centering vertical
-    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-45 sm:pb-55 lg:pb-65">
+    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-28 lg:pb-38">
       <AdBanner
         href={adBanner.href}
         title={adBanner.title}
@@ -34,8 +28,8 @@ export default function FriendsPage({
 
       <GlassMessage className="font-bold text-center">
         <span>
-          <span className="text-orange">{winner.name}</span> выиграл{" "}
-          {winner.win} <span>рублей</span>
+          <span className="text-orange">{lastWinner.name}</span> выиграл{" "}
+          {lastWinner.win} <span>рублей</span>
         </span>
       </GlassMessage>
 
@@ -68,9 +62,16 @@ export default function FriendsPage({
           </div>
         </div>
       ) : (
-        <div className="mt-8 flex-1 flex items-center justify-center">
-          <EmptyFriendsState />
-        </div>
+        <>
+          <div className="mt-8 flex-1 flex items-center justify-center">
+            <EmptyFriendsState />
+          </div>
+          <div className="min-w-[18rem] mt-auto pb-5 sm:pb-10 flex justify-center">
+            <Button className="max-w-[46.625rem] w-full rounded-[1.125rem] px-3 h-[3.25rem] bg-golden hover:bg-golden/80 active:scale-95">
+              <span className="text-[1.0625rem]">Пригласить друга</span>
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 // src/components/supergame/SuperClickBear.jsx
+import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 
 export default function SuperClickBear({ onClick, spinSpeed = 0.3 }) {
@@ -9,53 +10,55 @@ export default function SuperClickBear({ onClick, spinSpeed = 0.3 }) {
     const img = imgRef.current;
     if (!img) return;
 
-    // Создаём анимацию вращения
     const keyframes = [
       { transform: "rotate(0deg)" },
-      { transform: "rotate(360deg)" }
+      { transform: "rotate(360deg)" },
     ];
-    const options = {
-      duration: 2000,      // базовая длительность (2 секунды), но скорость будем менять через playbackRate
+    const animation = img.animate(keyframes, {
+      duration: 2000,
       iterations: Infinity,
-      easing: "linear"
-    };
-    const animation = img.animate(keyframes, options);
+      easing: "linear",
+    });
     animationRef.current = animation;
-
-    // Начальная скорость
     animation.playbackRate = spinSpeed;
 
-    return () => {
-      animation.cancel();
-    };
-  }, []); // пустой массив — создаём анимацию один раз
+    return () => animation.cancel();
+  }, []);
 
-  // Плавное изменение скорости при изменении spinSpeed
   useEffect(() => {
-    const anim = animationRef.current;
-    if (anim) {
-      // Меняем playbackRate плавно — браузер сам интерполирует скорость анимации
-      anim.playbackRate = spinSpeed;
+    if (animationRef.current) {
+      animationRef.current.playbackRate = spinSpeed;
     }
   }, [spinSpeed]);
 
   return (
     <div
-      className="relative min-w-[9rem] w-[66vw] max-w-[16rem] xss:w-[75vw] xss:max-w-[18rem] sm:w-[50vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:max-w-[25vh]"
+      className={cn(
+        "relative w-full",
+        "min-w-[13rem] max-w-[58vw]",    
+        "iphone:max-w-[62vw]",
+        "sm:max-w-[45vh]",
+        "lg:max-w-[36vh]",
+        "xl:max-w-[29.5vh]",
+        "2xl:max-w-[26vh]",
+      )}
       onClick={onClick}
     >
-      {/* Вращающийся круг — ссылка через ref */}
-      <img
-        ref={imgRef}
-        src="/images/webp/circle.webp"
-        alt=""
-        className="absolute inset-0 w-full h-full object-contain pointer-events-none scale-110"
-        style={{ willChange: "transform" }}
-      />
+      {/* Вращающийся круг – масштабируем с помощью отдельного блока, чтобы не конфликтовать с rotate */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none scale-110">
+        <img
+          ref={imgRef}
+          onContextMenu={(e) => e.preventDefault()}
+          src="/images/webp/circle.webp"
+          alt=""
+          className="w-full h-full object-contain"
+        />
+      </div>
       {/* Медведь */}
       <img
         src="/images/webp/level-bears/level-super.webp"
-        alt="Super Game"
+        onContextMenu={(e) => e.preventDefault()}
+        alt=""
         className="w-full h-full object-cover cursor-pointer transition-transform active:scale-95"
         draggable="false"
       />

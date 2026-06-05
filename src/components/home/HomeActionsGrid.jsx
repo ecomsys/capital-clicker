@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function HomeActionsGrid() {
   const navigate = useNavigate();
-  const { isFullscreen } = useFullscreen();
+  const { isFullscreen, openFullscreen } = useFullscreen();
   const timeoutRef = useRef(null);
 
   const progress = useChestStore((state) => state.getProgress('main'));
@@ -46,7 +46,7 @@ export default function HomeActionsGrid() {
 
   const handleFullscreenClick = () => {
     if (!isFullscreen && isMobile()) {
-      // openFullscreen();
+       openFullscreen();
     }
   };
 

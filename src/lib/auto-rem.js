@@ -13,7 +13,12 @@ export function initAutoRem({ baseSiteWidth = 1536, baseFontSize = 16 } = {}) {
   const htmlElement = document.documentElement;
 
   function updateFontSize() {
-    const screenWidth = window.innerWidth * 0.66;
+      const viewportWidth = window.innerWidth;
+
+    // Для мобилок (≤640px) – без коэффициента, для десктопа – умножаем на 0.66
+    const screenWidth = viewportWidth <= 640 
+      ? viewportWidth 
+      : viewportWidth * 0.66;
 
     // const screenWidth = 1536;
     const scaleFactor = screenWidth / baseSiteWidth;

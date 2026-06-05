@@ -1,5 +1,5 @@
-// src/components/home/ClickBear.jsx
-import { useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { useRef, useEffect, useMemo } from "react";
 
 export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
   const circleRef = useRef(null);
@@ -11,18 +11,17 @@ export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
   const strokeDashoffset = circumference - (percent / 100) * circumference;
   const isFull = percent >= 100;
 
-  const angle = (percent / 100) * 2 * Math.PI;
-  const centerX = 90;
-  const centerY = 90;
-  const endX = centerX + normalizedRadius * Math.sin(angle);
-  const endY = centerY - normalizedRadius * Math.cos(angle);
+  // Мемоизация вычислений, зависящих от percent
+  const { endX, endY, radiusCircle, fontSize } = useMemo(() => {
+    const angle = (percent / 100) * 2 * Math.PI;
+    const endX = 90 + normalizedRadius * Math.sin(angle);
+    const endY = 90 - normalizedRadius * Math.cos(angle);
+    let radiusCircle = 8 + (percent / 100) * 13;
+    if (isFull) radiusCircle = 22;
+    const fontSize = isFull ? 16 : 6 + (percent / 100) * 8;
+    return { endX, endY, radiusCircle, fontSize };
+  }, [percent, normalizedRadius, isFull]);
 
-  // Динамический размер кружка и текста
-  let radiusCircle = 8 + (percent / 100) * 13; // от 6 до 26
-  if (isFull) radiusCircle = 22; // при 100% чуть больше
-  const fontSize = isFull ? 16 : 6 + (percent / 100) * 8; // от 8 до 18
-
-  // При достижении 100% и наличии колбэка передаём координаты кружка
   useEffect(() => {
     if (isFull && onClaim && circleRef.current) {
       const rect = circleRef.current.getBoundingClientRect();
@@ -38,14 +37,24 @@ export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
       onClick={onClick}
     >
       <div
-        className="relative w-full mx-auto overflow-visible
-      min-w-[9rem] w-[69vw] max-w-[14.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[33vh] lg:max-w-[21.5rem] cursor-pointer transition-transform active:scale-95"
+        className={cn(
+          "relative w-full mx-auto overflow-visible",
+          "cursor-pointer transition-transform active:scale-95",
+          "min-w-[14rem] max-w-[60vw]",         
+          "iphone:max-w-[72vw]",
+          "sm:max-w-[45vh]",
+          "lg:max-w-[40vh]",
+          "xl:max-w-[38.5vh]",          
+          "2xl:max-w-[34.5vh]"          
+        )}
       >
         <img
           src="/images/webp/level-bears/level-1.webp"
-          alt="Уровень 1"
+          alt=""
           className="relative w-full h-full object-cover"
-          draggable="false"
+          draggable={false}
+          onContextMenu={(e) => e.preventDefault()}
+          style={{ WebkitTouchCallout: "none" }}
         />
 
         <div className="absolute -inset-3 flex items-center justify-center pointer-events-none overflow-visible">
@@ -77,7 +86,7 @@ export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
               strokeWidth={strokeWidth}
               opacity="0.4"
             />
-            {/* Прогресс с градиентом */}
+            {/* Прогресс */}
             <circle
               cx="90"
               cy="90"
@@ -92,7 +101,7 @@ export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
               style={{ transition: "stroke-dashoffset 0.2s linear" }}
             />
 
-            {/* Кружок с призом – меняет размер в зависимости от прогресса */}
+            {/* Кружок с призом */}
             <g>
               <circle
                 ref={circleRef}

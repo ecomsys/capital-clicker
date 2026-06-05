@@ -8,13 +8,10 @@ import { lastMessagesData } from "@/components/chat/LastMessages.data";
 import { MessageDay } from "@/components/chat/Messages";
 import { ChatInput } from "@/components/chat/ChatInput";
 
-export default function ChatPage({
-  adBanner = {
-    href: "https://example.com",
-    imageSrc: null,
-    title: "РЕКЛАМА",
-  },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner } from "@/constants/honeyPot.site.js";
+
+export default function ChatPage() {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState(lastMessagesData);

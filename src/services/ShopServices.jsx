@@ -2,10 +2,30 @@
 import useModalStore from "@/stores/useModalStore";
 import { ClickSliderContent } from "@/components/shop/ClickSlider";
 
+const { openModal } = useModalStore.getState();
+
 class ShopServices {
   // отключить рекламу
   offAdClick() {
-    alert("Отключить рекламу !");
+     openModal({
+      classes: "w-full sm:max-w-[33.75rem]",
+      content: (
+        <ClickSliderContent
+          title="Отключить рекламу"
+          description="Если реклама вам мешает, можете отключить ее за небольшую плату"
+          onBuy={(price, stepIndex) => {
+            console.log(`Покупка на ${price}₽, шаг ${stepIndex}`);
+            alert(`Купить за ${price} ₽?`);
+          }}
+          steps={[
+            { info: "1 день", price: "100" },
+            { info: "7 дней", price: "700" },
+            { info: "30 дней", price: "3000" },            
+          ]}
+          defaultIndex={1}
+        />
+      ),
+    });
   }
 
   // подписка на премиум
@@ -20,8 +40,6 @@ class ShopServices {
 
   // авто кликкер
   autoClick() {
-    const { openModal } = useModalStore.getState();
-
     openModal({
       classes: "w-full sm:max-w-[33.75rem]",
       content: (

@@ -1,40 +1,40 @@
 import { cn } from "@/lib/utils";
 
 export default function TreasureChest({
-    progress = 69,
-    chestUrl = "/images/webp/icons-png/sunduk.webp",
-    className,
-    ...props
-  }) {
-  // Десктоп: периметр с rx=16
+  progress = 69,
+  chestUrl = "/images/webp/icons-png/sunduk.webp",
+  className,
+  ...props
+}) {
+  // Десктоп: периметр с rx=16 (путь по часовой стрелке)
   const desktopPerimeter = 369;
   const desktopDashoffset = desktopPerimeter * (1 - progress / 100);
   const desktopPath = `
     M 55,0
-    L 16,0
-    A 16,16 0 0 0 0,16
-    L 0,72
-    A 16,16 0 0 0 16,88
-    L 94,88
-    A 16,16 0 0 0 110,72
-    L 110,16
-    A 16,16 0 0 0 94,0
+    L 94,0
+    A 16,16 0 0 1 110,16
+    L 110,72
+    A 16,16 0 0 1 94,88
+    L 16,88
+    A 16,16 0 0 1 0,72
+    L 0,16
+    A 16,16 0 0 1 16,0
     L 55,0
   `;
 
-  // Мобилка: периметр с rx=16
+  // Мобилка: периметр с rx=16 (путь по часовой стрелке)
   const mobilePerimeter = 331;
   const mobileDashoffset = mobilePerimeter * (1 - progress / 100);
   const mobilePath = `
     M 55,0
-    L 16,0
-    A 16,16 0 0 0 0,16
-    L 0,53
-    A 16,16 0 0 0 16,69
-    L 94,69
-    A 16,16 0 0 0 110,53
-    L 110,16
-    A 16,16 0 0 0 94,0
+    L 94,0
+    A 16,16 0 0 1 110,16
+    L 110,53
+    A 16,16 0 0 1 94,69
+    L 16,69
+    A 16,16 0 0 1 0,53
+    L 0,16
+    A 16,16 0 0 1 16,0
     L 55,0
   `;
 
@@ -48,7 +48,7 @@ export default function TreasureChest({
       {...props}
     >
       {/* Десктоп (≥ sm) */}
-      <div className="chest-inner chest-desktop  hidden sm:block aspect-[110/88] w-full">
+      <div className="chest-inner chest-desktop hidden sm:block aspect-[110/88] w-full">
         <svg
           viewBox="0 0 110 88"
           className="w-full h-full overflow-visible"
@@ -84,13 +84,7 @@ export default function TreasureChest({
             preserveAspectRatio="xMidYMid meet"
           />
           {progress >= 100 && (
-            <text
-              x="55"
-              y="44"
-              textAnchor="middle"
-              fill="#FFD700"
-              fontSize="16"
-            >
+            <text x="55" y="44" textAnchor="middle" fill="#FFD700" fontSize="16">
               ✨
             </text>
           )}
@@ -134,13 +128,7 @@ export default function TreasureChest({
             preserveAspectRatio="xMidYMid meet"
           />
           {progress >= 100 && (
-            <text
-              x="55"
-              y="35"
-              textAnchor="middle"
-              fill="#FFD700"
-              fontSize="14"
-            >
+            <text x="55" y="35" textAnchor="middle" fill="#FFD700" fontSize="14">
               ✨
             </text>
           )}

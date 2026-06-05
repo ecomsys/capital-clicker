@@ -324,7 +324,7 @@ export default function Wheel({
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center justify-center w-full mb-6 ",
+        "relative",
         className,
       )}
     >
@@ -343,11 +343,8 @@ export default function Wheel({
 
       {/* Контейнер колеса */}
       <div
-        className={cn(
-          "min-w-[14rem] min-h-[14rem] h-[40vh] max-h-[40vh]",
-          "iphone:min-w-[14rem] iphone:min-h-[14rem] iphone:h-[38vh] iphone:max-h-[38vh]",
-          "sm:min-w-[30rem] sm:min-h-[30rem] sm:h-[43vh] sm:max-h-[43vh]",
-          "flex-shrink-0 cursor-pointer select-none w-full overflow-hidden p-6",
+        className={cn(         
+          "p-4 flex-shrink-0 cursor-pointer select-none w-full overflow-hidden",
           spinning || disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}
         onClick={handleSpin}
@@ -373,7 +370,7 @@ export default function Wheel({
         {/* SVG колесо */}
         <svg
           viewBox="0 0 400 400"
-          className="w-full h-full drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]"
+          className="w-full h-full drop-shadow-[0_0_1.5rem_rgba(255,215,0,0.4)]"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: spinning
@@ -456,7 +453,7 @@ export default function Wheel({
         onClick={handleSpin}
         disabled={spinning}
         className={cn(
-          "mx-auto px-8 h-[3rem] text-lg font-bold rounded-full transition-all",
+          "mb-6 px-8 h-[3rem] text-lg font-bold rounded-full transition-all",
           disabled
             ? "bg-gray-500 cursor-not-allowed opacity-50"
             : "bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 hover:scale-105",

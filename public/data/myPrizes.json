@@ -4,7 +4,7 @@
       "id": "cash_10000",
       "type": "money",
       "title": "10 000 ₽",
-      "icon": "/images/webp/cash/cash_10000.webp",
+      "icon": "/images/webp/cash-wheel/cash_10_000.webp",
       "value": 10000,
       "locked": false
     },
@@ -12,7 +12,7 @@
       "id": "cash_100",
       "type": "money",
       "title": "100 ₽",
-      "icon": "/images/webp/cash/cash_100.webp",
+      "icon": "/images/webp/cash-wheel/cash_100.webp",
       "value": 100,
       "locked": false
     },

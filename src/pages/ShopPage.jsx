@@ -5,13 +5,10 @@ import { BackTitle } from "@/components/basic/BackTitle";
 import { ShopCard } from "@/components/shop/ShopCard";
 import { shopCardsData } from "@/components/shop/ShopCards.data";
 
-export default function ShopPage({
-  adBanner = {
-    href: "https://example.com",
-    imageSrc: null,
-    title: "РЕКЛАМА",
-  },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner } from "@/constants/honeyPot.site.js";
+
+export default function ShopPage() {
   const navigate = useNavigate();
 
   return (
@@ -32,7 +29,7 @@ export default function ShopPage({
         className="mt-6 mb-10"
       />
 
-      <div className="w-full max-w-232.5 mx-auto grid grid-cols-2 xss:flex flex-wrap gap-3 sm:gap-4 justify-center">        
+      <div className="w-full max-w-232.5 mx-auto grid grid-cols-2 iphone:flex flex-wrap gap-3 sm:gap-4 justify-center">        
         {shopCardsData.map((card) => (
           <ShopCard key={card.id} data={card} onClick={card.onClick} />
         ))}

@@ -16,7 +16,7 @@ export function EarnCard({ className, onClick, data, ...props }) {
     <div
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-between rounded-[1.5rem] w-full p-2 xss:aspect-[177/218] xss:w-44.25 xss:h-54.5 overflow-hidden",
+        "flex flex-col items-center justify-between rounded-[1.5rem] w-full p-2 iphone:aspect-[177/218] iphone:w-44.25 iphone:h-54.5 overflow-hidden",
         "bg-[rgba(217, 217, 217, 0.02)] shadow-[0_0_0.4375rem_0_rgba(254,141,0,0.1)] transition-all duration-200",
         "text-white transition-transform hover:scale-[102%] duration-300",
         className,

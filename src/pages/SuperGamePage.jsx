@@ -1,5 +1,7 @@
 // src/pages/SuperGamePage.jsx
-import { useState, useRef, useCallback } from "react";
+
+// компонеты
+import { useState, useRef, useCallback, useEffect } from "react";
 import SuperHeader from "@/components/supergame/Header";
 import ClickCounter from "@/components/home/ClickCounter";
 import EnergyDisplay from "@/components/home/EnergyDisplay";
@@ -8,56 +10,64 @@ import { AdBanner } from "@/components/basic/adBanner";
 import GameModeToggle from "@/components/supergame/GameModeToggle";
 import { Button } from "@/components/ui/Button";
 import SuperPrizeBanner from "@/components/supergame/SuperPrizeBanner";
+import SuperGameActionsGrid from "@/components/supergame/SuperGameActionsGrid";
+
+// менеджер звуков
+import { playSound } from "@/audio/manager";
+
+// хуки
+import { useFlyingPlus } from "@/hooks/useFlyingPlus";
+import { useFlyingCoin } from "@/hooks/useFlyingCoin";
+import { useDustEffect } from "@/hooks/useDustEffect";
+
+// сторы
+import useChestStore from "@/stores/useChestStore";
 import useSettingsStore, { SUPER_GAME_MODES } from "@/stores/useSettingsStore";
 import usePrizeStore from "@/stores/usePrizeStore";
 
-import { useFlyingPlus } from "@/hooks/useFlyingPlus";
-import { useFlyingCoin } from "@/hooks/useFlyingCoin";
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner } from "@/constants/honeyPot.site.js";
 
-import { playSound, unlockAudio } from "@/audio/manager";
+export default function SuperGamePage() {
 
-import useChestStore from "@/stores/useChestStore";
-
-export default function SuperGamePage({
-  adBanner = {
-    href: "https://example.com",
-    imageSrc: null,
-    title: "РЕКЛАМА",
-  },
-}) {
-  const audioUnlockedRef = useRef(false);
+  // Рефы для таймеров затухания скорости – вместо window
+  const spinTimeoutRef = useRef(null);
+  const spinTimeout2Ref = useRef(null);
 
   const [clicks, setClicks] = useState(0);
   const [energy, setEnergy] = useState(1000);
   const [lastClickTime, setLastClickTime] = useState(0);
-  const [spinSpeed, setSpinSpeed] = useState(0.1); // медленно по умолчанию (3 сек на оборот)
+  const [spinSpeed, setSpinSpeed] = useState(0.1); // медленно по умолчанию
 
   const counterRef = useRef(null);
   const { flyFromClick } = useFlyingPlus();
   const { superGameMode } = useSettingsStore();
   const { selectedPrize } = usePrizeStore();
   const { flyFromClick: flyCoin } = useFlyingCoin();
+  const { dustOnClick } = useDustEffect();
+
   const { incrementProgress } = useChestStore();
+
+  // Очистка таймеров при размонтировании
+  useEffect(() => {
+    return () => {
+      if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+      if (spinTimeout2Ref.current) clearTimeout(spinTimeout2Ref.current);
+    };
+  }, []);
 
   const handleClickBear = useCallback(
     async (event) => {
       if (energy <= 0) return;
       event?.stopPropagation();
 
-      // Разблокируем аудио при первом клике
-      if (!audioUnlockedRef.current) {
-        await unlockAudio("/sounds/click.mp3");
-        audioUnlockedRef.current = true;
-      }
-      // Проигрываем звук клика (тихо)
-      await playSound("/sounds/click.mp3", { volume: 0.25 }).catch((e) =>
-        console.warn(e),
-      );
+      playSound("/sounds/click.mp3", { volume: 0.35 }).catch(console.warn);
 
       const now = Date.now();
       const diff = now - lastClickTime;
       setLastClickTime(now);
 
+      // Расчёт скорости вращения в зависимости от частоты кликов
       let newSpeed = 0.3;
       if (diff < 170) newSpeed = 2.2;
       else if (diff < 220) newSpeed = 1.5;
@@ -67,12 +77,13 @@ export default function SuperGamePage({
 
       setSpinSpeed(newSpeed);
 
-      // Плавное затухание скорости
-      if (window.spinTimeout) clearTimeout(window.spinTimeout);
-      if (window.spinTimeout2) clearTimeout(window.spinTimeout2);
-      window.spinTimeout = setTimeout(() => {
+      // Плавное затухание скорости – сбрасываем старые таймеры
+      if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+      if (spinTimeout2Ref.current) clearTimeout(spinTimeout2Ref.current);
+
+      spinTimeoutRef.current = setTimeout(() => {
         setSpinSpeed(0.7);
-        window.spinTimeout2 = setTimeout(() => {
+        spinTimeout2Ref.current = setTimeout(() => {
           setSpinSpeed(0.3);
         }, 1000);
       }, 1500);
@@ -80,17 +91,18 @@ export default function SuperGamePage({
       // Анимации
       flyCoin(event);
       flyFromClick(event, counterRef);
+      dustOnClick(event);
 
       setClicks((prev) => prev + 1);
       setEnergy((prev) => prev - 1);
 
-      incrementProgress('superGame', 15);
+      incrementProgress("superGame", 15);
     },
-    [energy, lastClickTime, flyFromClick, flyCoin,incrementProgress],
+    [energy, lastClickTime, flyFromClick, flyCoin, incrementProgress],
   );
 
   return (
-    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-55 sm:pb-63 lg:pb-76">
+    <div className="min-h-screen min-h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-4 sm:pb-29 lg:pb-38">
       <AdBanner
         href={adBanner.href}
         title={adBanner.title}
@@ -130,17 +142,18 @@ export default function SuperGamePage({
         </div>
       </div>
 
-      {/* Медведь – передаём событие и текущую скорость вращения */}
-      <div className="flex justify-center flex-1 items-center mb-2 sm:mb-1 lg:mb-0">
-        <SuperClickBear
-          onClick={(e) => handleClickBear(e)}
-          spinSpeed={spinSpeed}
-        />
+      {/* Медведь */}
+      <div className="flex justify-center flex-1 items-center mb-6 sm:mb-4 lg:mb-0">
+        <SuperClickBear onClick={handleClickBear} spinSpeed={spinSpeed} />
       </div>
 
       {/* Энергия */}
-      <div className="flex justify-center mb-3 sm:mb-4 lg:mb-2">
+      <div className="flex justify-center mb-8 sm:mb-4">
         <EnergyDisplay energy={energy} />
+      </div>
+
+      <div className="-translate-y-1/2 sm:translate-y-0 min-w-[18rem] mt-auto pb-4 flex sm:justify-center">
+        <SuperGameActionsGrid />
       </div>
     </div>
   );

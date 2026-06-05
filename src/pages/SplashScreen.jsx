@@ -4,10 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { isMobile } from "@/lib/platform";
 
-
 export default function SplashScreen() {
-  const { openFullscreen } = useFullscreen();
-
+  const { isFullscreen, openFullscreen } = useFullscreen();
   const [progress, setProgress] = useState(0);
   const [showButton, setShowButton] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -43,7 +41,7 @@ export default function SplashScreen() {
     };
   }, []);
 
-  // Редирект после окончания видео + пауза 2 секунды
+  // Редирект после окончания видео
   useEffect(() => {
     if (videoEnded) {
       const timer = setTimeout(() => {
@@ -54,18 +52,17 @@ export default function SplashScreen() {
   }, [videoEnded, navigate]);
 
   const handleStart = () => {
-    if (isMobile()) {
+    if (!isFullscreen && isMobile()) {
       openFullscreen();
     }
     const video = videoRef.current;
     if (!video) return;
 
     setShowButton(false);
-    video.muted = false; // включаем звук
+    video.muted = false;
     video.volume = 0.3;
     video.play().catch((err) => {
       console.error("Playback error:", err);
-      // Если видео не запустилось, всё равно переходим
       setVideoEnded(true);
     });
   };
@@ -73,7 +70,12 @@ export default function SplashScreen() {
   const handleVideoEnd = () => setVideoEnded(true);
 
   return (
-    <div className="min-h-[100dvh] eco-container bg-black flex flex-col py-[3.125rem] sm:py-[6.25rem]">
+    <div
+      className="min-h-[100dvh] eco-container bg-black flex flex-col py-[3.125rem] sm:py-[6.25rem]"
+      // Глобальный запрет выделения и контекстного меню (для всей страницы)
+      onContextMenu={(e) => e.preventDefault()}
+      style={{ userSelect: "none", WebkitTouchCallout: "none" }}
+    >
       <h1 className="text-[3rem] sm:text-[4rem] font-extrabold text-white uppercase text-center">
         КАПИТАЛ
       </h1>
@@ -85,18 +87,25 @@ export default function SplashScreen() {
         <div
           onClick={handleStart}
           className="relative aspect-square rounded-full overflow-hidden h-full w-full mx-auto mb-[10vh]
-          max-h-[22rem] max-w-[22rem]"
+          w-[35vh] max-h-[30rem] max-w-[30rem]"
+          // Запрещаем контекстное меню и перетаскивание для всей области клика
+          onContextMenu={(e) => e.preventDefault()}
+          draggable={false}
         >
           {/* Постер */}
           <img
             src="/images/webp/splash-poster.webp"
             alt="Video poster"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
             className="absolute inset-0 w-full h-full object-cover scale-120"
           />
 
           {/* Видео */}
           <video
             ref={videoRef}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
             src="/videos/splash-intro.mp4"
             className="absolute inset-0 w-full h-full object-cover"
             muted
@@ -105,10 +114,11 @@ export default function SplashScreen() {
             preload="auto"
           />
 
-          {/* Кнопка "Начать" — абсолютно поверх видео, не ломает верстку */}
+          {/* Кнопка "Начать" */}
           {showButton && (
             <button
               onClick={handleStart}
+              onContextMenu={(e) => e.preventDefault()}
               className={`absolute bottom-0 left-1/2 -translate-x-1/2 px-6 py-2 bg-white/10 text-white text-lg rounded-full hover:bg-white/25 active:scale-95 transition-all z-10 whitespace-nowrap ${
                 progress >= 100 ? "bg-white/20" : ""
               }`}
