@@ -17,7 +17,7 @@ export default function EmptyFriendsState({ className }) {
       </div>
 
       {/* Заголовок */}
-      <h3 className="text-2xl sm:text-[2rem] font-bold text-white mt-16 sm:mt-8">
+      <h3 className="text-2xl sm:text-[2rem] font-bold text-white mt-12 sm:mt-8">
         Приглашай друзей <br />и зарабатывай
       </h3>
 
@@ -27,7 +27,7 @@ export default function EmptyFriendsState({ className }) {
       </p>
 
       {/* Награда */}
-      <div className="flex items-center justify-center gap-4 mt-6 mb-8 sm:my-12">
+      <div className="flex items-center justify-center gap-4 mt-4 mb-4 sm:my-12">
         <svg className="w-9 h-9 sm:w-12 sm:h-12" aria-hidden="true">
           <use href="/icons/sprite/sprite.svg#rub" />
         </svg>

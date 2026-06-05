@@ -41,7 +41,7 @@ export function ShopCard({ className, onClick, children, data, ...props }) {
     <div
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-between rounded-[1.5rem] w-full p-2 xss:aspect-[173/224] xss:w-43.25 xss:h-56 overflow-hidden",
+        "flex flex-col items-center justify-between rounded-[1.5rem] w-full p-2 iphone:aspect-[173/224] iphone:w-43.25 iphone:h-56 overflow-hidden",
         "bg-[rgba(217, 217, 217, 0.02)] shadow-[0_0_0.4375rem_0_rgba(254,141,0,0.1)] transition-all duration-200",
         "border-t border-l border-golden",
         "text-golden transition-transform hover:scale-[102%] duration-300",

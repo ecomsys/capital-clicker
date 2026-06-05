@@ -4,8 +4,8 @@ import { persist } from "zustand/middleware";
 
 // Лимиты для каждого сундука – можно менять под свои нужды
 const CHEST_LIMITS = {
-  main: 150, // для главной страницы
-  superGame: 200, // для супер-игры (пример другого значения)
+  main: 15000, // для главной страницы
+  superGame: 20000, // для супер-игры (пример другого значения)
 };
 
 const useChestStore = create(

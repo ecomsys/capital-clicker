@@ -7,16 +7,18 @@ import { BackTitle } from "@/components/basic/backTitle";
 import { Button } from "@/components/ui/Button";
 import { Switch } from "@/components/ui/Switch";
 import useSettingsStore from "@/stores/useSettingsStore";
+import { accountServices } from "@/services/AccountServices";
 
-export default function ProfilePage({
-  adBanner = { href: "https://example.com", imageSrc: null, title: "РЕКЛАМА" },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner } from "@/constants/honeyPot.site.js";
+
+export default function ProfilePage() {
   const navigate = useNavigate();
   const { soundEnabled, setSoundEnabled, language, setLanguage } =
     useSettingsStore();
 
   return (
-    <div className="pt-2 sm:pt-4 lg:pt-7.5 pb-65 sm:pb-75 lg:pb-87">
+    <div className="pt-2 sm:pt-4 lg:pt-7.5 pb-28 lg:pb-38">
       <AdBanner
         href={adBanner.href}
         title={adBanner.title}
@@ -82,6 +84,24 @@ export default function ProfilePage({
             className="mt-6 sm:mt-9 mx-auto max-w-[46.625rem] w-full rounded-[1.125rem] px-3 h-[3.25rem] bg-golden hover:bg-golden/80 active:scale-95"
           >
             <span className="text-[1.0625rem]">Получить вознаграждение</span>
+          </Button>
+        </div>
+
+        <div className="min-w-[18rem] mt-auto pb-5 sm:pb-10 flex flex-col justify-center pt-2">
+          <button
+            className="mx-auto mb-4 cursor-pointer text-[#ff3f3f] hover:text-[#ff3f3f]/80 transition text-base text-center"
+            onClick={() => accountServices.deleteAccount()}
+          >
+            Удалить аккаунт
+          </button>
+
+          <Button
+            onClick={() => {
+              navigate("/chat");
+            }}
+            className="mx-auto max-w-[46.625rem] w-full rounded-[1.125rem] px-3 h-[3.25rem] text-golden border-golden bg-[transparent] hover:bg-golden/10 active:scale-95"
+          >
+            <span className="text-[1.0625rem]">Поддержка</span>
           </Button>
         </div>
       </div>

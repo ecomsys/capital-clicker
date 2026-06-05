@@ -30,7 +30,7 @@ export default function BottomNavbar() {
     // Вызываем полный экран только если мы еще не в нем, 
     // чтобы избежать лишних вызовов API
     if (!isFullscreen && isMobile()) {
-      // openFullscreen();
+       openFullscreen();
     }
   };
 

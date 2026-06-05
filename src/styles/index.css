@@ -32,7 +32,7 @@ body {
     --safe-left: env(safe-area-inset-left);
     --safe-right: env(safe-area-inset-right);
   }
-  
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -41,6 +41,21 @@ body {
   }
   html {
     @apply font-sans;
+  }
+
+  * {
+     touch-action: manipulation;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
+  img {
+    pointer-events: none;
+  }
+
+  img,
+  video {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -147,18 +162,18 @@ body {
 
 /* Для Chrome/Edge/Safari */
 .scroll-hide::-webkit-scrollbar {
-  width: 0.375rem;           /* ширина вертикального скролла */
-  height: 0.375rem;          /* высота горизонтального */
+  width: 0.375rem; /* ширина вертикального скролла */
+  height: 0.375rem; /* высота горизонтального */
   background: transparent;
 }
 
 .scroll-hide::-webkit-scrollbar-track {
-  background: transparent;  /* прозрачный трек */
+  background: transparent; /* прозрачный трек */
   margin: 0.25rem 0;
 }
 
 .scroll-hide::-webkit-scrollbar-thumb {
-  background: rgba(254, 141, 0, 0.3);  /* белый полупрозрачный ползунок */
+  background: rgba(254, 141, 0, 0.3); /* белый полупрозрачный ползунок */
   border-radius: 0.625rem;
   transition: background 0.2s;
 }
@@ -170,7 +185,7 @@ body {
 
 /* Если хочешь, чтобы скроллбар появлялся только при наведении на область */
 .scroll-hide {
-  scrollbar-width: thin;  /* Firefox всё равно показывает тонкий, но можно скрыть принудительно? */
+  scrollbar-width: thin; /* Firefox всё равно показывает тонкий, но можно скрыть принудительно? */
 }
 /* Для WebKit: скрываем по умолчанию, показываем при наведении */
 .scroll-hide:not(:hover)::-webkit-scrollbar-thumb {
@@ -201,7 +216,6 @@ flying-plus
   white-space: nowrap;
   will-change: transform, opacity;
 }
-
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -335,14 +349,19 @@ select:focus-visible {
   box-shadow: none !important;
 }
 
-
 /********************************************
 Градиентная анимация для кнопки 
 *******************************************/
 @keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 .animate-gradient-shift {
   animation: gradient-shift 3s ease infinite;
@@ -350,8 +369,14 @@ select:focus-visible {
 
 /* Появление результата */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
@@ -361,4 +386,3 @@ select:focus-visible {
 .glow-gold {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
-

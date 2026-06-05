@@ -11,7 +11,7 @@ export function initViewport({ breakpoint = 1536, designWidth = 1536 } = {}) {
     if (realWidth < breakpoint) {
       meta.setAttribute(
         "content",
-        "width=device-width, initial-scale=1"
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
       );
       console.log("adaptive mode:", { realWidth, breakpoint });
       return;

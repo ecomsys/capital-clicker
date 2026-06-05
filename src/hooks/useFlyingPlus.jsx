@@ -2,25 +2,24 @@
 import { useCallback, useRef } from 'react';
 
 export const useFlyingPlus = () => {
-  const activeAnimations = useRef(new Map());
+  const activeAnimations = useRef(new Set()); // проще чем Map
   const lastCallTime = useRef(0);
 
   const createFlyingNumber = useCallback((startX, startY, targetRect) => {
     const div = document.createElement('div');
-    div.className = 'flying-plus';
     div.textContent = '+1';
     div.style.position = 'fixed';
-    div.style.left = `${startX - 30}px`;   // немного смещено от центра
+    div.style.left = `${startX - 30}px`;
     div.style.top = `${startY - 30}px`;
-    div.style.fontSize = '3rem';           // крупнее
+    div.style.fontSize = '2.5rem';        // чуть меньше, легче рендерить
     div.style.fontWeight = 'bold';
     div.style.fontFamily = 'system-ui, -apple-system, sans-serif';
     div.style.color = '#ffd966';
-    div.style.textShadow = '0 0 0.5rem #b45309, 0 0 0.2rem #000';
+    div.style.textShadow = '1px 1px 0 #b45309'; // проще, без размытия
     div.style.whiteSpace = 'nowrap';
     div.style.pointerEvents = 'none';
     div.style.zIndex = '9999';
-    div.style.willChange = 'transform, opacity';
+    // will-change убран
 
     document.body.appendChild(div);
 
@@ -29,28 +28,30 @@ export const useFlyingPlus = () => {
     const deltaX = targetX - startX;
     const deltaY = targetY - startY;
 
-    // Параметры дуги для +1 (лёгкий подскок)
-    const arcHeight = 30;                  // высота дуги
+    // Простая дуга без сложной кривой
+    const arcHeight = 30;
     const midX = startX + deltaX * 0.5;
     const midY = startY + deltaY * 0.5 - arcHeight;
     const midDeltaX = midX - startX;
     const midDeltaY = midY - startY;
 
+    // Используем CSS transition + таймеры? Нет, animate проще.
+    // Но упрощаем keyframes и easing
     const animation = div.animate(
       [
-        { transform: 'translate(0, 0) scale(0.5)', opacity: 1 },
-        { transform: `translate(${midDeltaX}px, ${midDeltaY}px) scale(1.1)`, opacity: 1, offset: 0.4 },
-        { transform: `translate(${deltaX}px, ${deltaY}px) scale(1.3)`, opacity: 0 }
+        { transform: 'translate(0, 0) scale(0.6)', opacity: 1 },
+        { transform: `translate(${midDeltaX}px, ${midDeltaY}px) scale(1)`, opacity: 1, offset: 0.4 },
+        { transform: `translate(${deltaX}px, ${deltaY}px) scale(1.2)`, opacity: 0 }
       ],
       {
-        duration: 2000,                   // дольше (1 секунда)
-        easing: 'cubic-bezier(0.2, 0.9, 0.4, 1.1)',
+        duration: 1200,        // короче, быстрее очищается
+        easing: 'ease-out',    // проще, чем cubic-bezier
         fill: 'forwards'
       }
     );
 
     const id = performance.now() + Math.random();
-    activeAnimations.current.set(id, animation);
+    activeAnimations.current.add(id);
 
     animation.onfinish = () => {
       div.remove();
@@ -62,7 +63,7 @@ export const useFlyingPlus = () => {
     if (!targetRef?.current) return;
 
     const now = Date.now();
-    if (now - lastCallTime.current < 50) return;
+    if (now - lastCallTime.current < 80) return; // чуть больше задержка для старых
     lastCallTime.current = now;
 
     const { clientX, clientY } = event;

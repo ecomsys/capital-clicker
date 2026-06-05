@@ -1,26 +1,32 @@
+// src/pages/WheelPage
+
+import { cn } from "@/lib/utils";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { BackTitle } from "@/components/basic/BackTitle";
 
 // компонеты
 import Wheel from "@/components/wheel/Wheel";
 import { AdBanner } from "@/components/basic/adBanner";
+import { BackTitle } from "@/components/basic/BackTitle";
 import { GlassMessage } from "@/components/basic/GlassMessage";
 
+// менеджер звуков
 import { playSound } from "@/audio/manager";
+
+// сторы
 import useChestStore from "@/stores/useChestStore";
 
+// запасная константа если осноовной json отвалится
 import { DEFAULT_PRIZES } from "@/pages/WheelPage/defaultPrizes.data";
 
-export default function WheelPage({
-  adBanner = { href: "https://example.com", imageSrc: null, title: "РЕКЛАМА" },
-  winner = { name: "Иван", win: "1000" },
-}) {
+// импортируем переменные рекламы и приманки пока из файла
+import { adBanner, lastWinner } from "@/constants/honeyPot.site.js";
+
+export default function WheelPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const from = searchParams.get("from") || "main";
-
   const progress = useChestStore((state) => state.getProgress(from));
   const limit = useChestStore((state) => state.getLimit(from));
   const isCompleted = progress >= limit;
@@ -86,13 +92,13 @@ export default function WheelPage({
   }
 
   return (
-    <main className="min-h-[100dvh] flex flex-col pb-23 sm:pb-25 lg:pb-40">
+    <main className="min-h-[100dvh] flex flex-col pb-28 lg:pb-38">
       <header className="flex-shrink-0 pt-3 sm:pt-4 lg:pt-6 px-3">
         <AdBanner {...adBanner} className="mb-2 sm:mb-3" />
         <GlassMessage className="font-bold text-center text-sm sm:text-base flex items-center gap-1">
-          <span className="text-[#FFD700]">{winner.name}</span>
+          <span className="text-[#FFD700]">{lastWinner.name}</span>
           <span>только что выиграл</span>
-          <span className="text-white">{winner.win} ₽</span>
+          <span className="text-white">{lastWinner.win} ₽</span>
         </GlassMessage>
 
         {/* Заголовок и кнопка назад */}
@@ -102,8 +108,19 @@ export default function WheelPage({
           className="mt-6 mb-1"
         />
       </header>
-      <section className="flex-1 flex items-center justify-center">
-        <Wheel {...wheelProps} />
+      <section className=" flex-1 w-full flex items-center justify-center">
+        <Wheel
+          className={cn(
+            "w-full relative flex flex-col items-center overflow-visible",
+            "cursor-pointer transition-transform active:scale-95",
+            "min-w-[14rem] max-w-[80vw]",            
+            "iphone:max-w-[90vw]",
+            "sm:min-w-[24rem] sm:max-w-[40vh]",
+            "lg:max-w-[50vh]",
+            "xl:max-w-[52vh]",
+          )}
+          {...wheelProps}
+        />
       </section>
     </main>
   );

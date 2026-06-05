@@ -6,9 +6,7 @@ export default function TreasureChest({
   className,
   ...props
 }) {
- 
-
-  const perimeter = 369; // можно уточнить под реальную длину пути, но визуально хватает
+  const perimeter = 369; // длина пути (не менялась)
   const dashoffset = perimeter * (1 - progress / 100);
 
   return (
@@ -40,17 +38,17 @@ export default function TreasureChest({
             strokeWidth="2"
           />
 
-          {/* Прогресс – против часовой, старт с середины верха, углы наружу */}
+          {/* Прогресс – теперь ПО ЧАСОВОЙ стрелке, старт сверху-посередине */}
           <path
             d="M 55,0
-              L 16,0
-              A 16,16 0 0 0 0,16
-              L 0,72
-              A 16,16 0 0 0 16,88
-              L 94,88
-              A 16,16 0 0 0 110,72
-              L 110,16
-              A 16,16 0 0 0 94,0
+              L 94,0
+              A 16,16 0 0 1 110,16
+              L 110,72
+              A 16,16 0 0 1 94,88
+              L 16,88
+              A 16,16 0 0 1 0,72
+              L 0,16
+              A 16,16 0 0 1 16,0
               L 55,0"
             fill="none"
             stroke="#FE8D00"

@@ -13,7 +13,7 @@ import useChestStore from "@/stores/useChestStore";
 
 export default function SuperGameActionsGrid() {
   const navigate = useNavigate();
-  const { isFullscreen } = useFullscreen();
+  const { isFullscreen, openFullscreen } = useFullscreen();
   const timeoutRef = useRef(null);
 
   const progress = useChestStore((state) => state.getProgress("superGame"));
@@ -49,7 +49,7 @@ export default function SuperGameActionsGrid() {
 
   const handleFullscreenClick = () => {
     if (!isFullscreen && isMobile()) {
-      // openFullscreen();
+      openFullscreen();
     }
   };
 
