@@ -4,70 +4,70 @@
       "id": "cash_1",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_100",
       "type": "money",
       "title": "100 ₽",
-      "icon": "/images/webp/cash/cash_1000.webp",
+      "icon": "/images/webp/cash-wheel/cash_10_000.webp",
       "value": 100
     },
     {
       "id": "cash_01",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_10",
       "type": "money",
       "title": "10 ₽",
-      "icon": "/images/webp/cash/cash_100.webp",
+      "icon": "/images/webp/cash-wheel/cash_100.webp",
       "value": 10
     },
     {
       "id": "cash_001",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_500",
       "type": "money",
       "title": "500 ₽",
-      "icon": "/images/webp/cash/cash_10000.webp",
+      "icon": "/images/webp/cash-wheel/cash_100_000.webp",
       "value": 500
     },
     {
       "id": "cash_0001",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_50",
       "type": "money",
       "title": "50 ₽",
-      "icon": "/images/webp/cash/cash_1000.webp",
+      "icon": "/images/webp/cash-wheel/cash_1_000.webp",
       "value": 50
     },
     {
       "id": "cash_00001",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_010",
       "type": "money",
       "title": "10 ₽",
-      "icon": "/images/webp/cash/cash_100.webp",
+      "icon": "/images/webp/cash-wheel/cash_100.webp",
       "value": 10
     },
 
@@ -75,14 +75,14 @@
       "id": "cash_000001",
       "type": "money",
       "title": "1 ₽",
-      "icon": "/images/webp/cash/cash_10.webp",
+      "icon": "/images/webp/cash-wheel/cash_10.webp",
       "value": 1
     },
     {
       "id": "cash_1000",
       "type": "money",
       "title": "1000 ₽",
-      "icon": "/images/webp/cash/cash_10000.webp",
+      "icon": "/images/webp/cash-wheel/cash_1_000_000.webp",
       "value": 1000
     }
   ]
