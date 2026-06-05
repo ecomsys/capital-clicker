@@ -1,10 +1,18 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 import useModalStore from "@/stores/useModalStore";
+import useChestStore from "@/stores/useChestStore";
+import usePrizeBagStore from "@/stores/usePrizeBagStore";
 import Confetti from "react-confetti";
+import { useWheelSound } from "@/hooks/useWheelSound";
 
-// градиенты для секторов
+// ------------------------------------------------------------
+// КОНСТАНТЫ
+// ------------------------------------------------------------
+// Форсированный приз для тестов. Поставь null, чтобы крутить честно.
+const FORCED_PRIZE = null; // например: "100 ₽"
+
 const VIP_COLORS = [
   "url(#grad1)",
   "url(#grad2)",
@@ -16,154 +24,154 @@ const VIP_COLORS = [
   "url(#grad8)",
 ];
 
-// Золотая рамка-блик
-const GoldBorder = () => (
-  <defs>
-    {[...Array(8)].map((_, i) => (
-      <linearGradient
-        key={i}
-        id={`grad${i + 1}`}
-        x1="0%"
-        y1="0%"
-        x2="100%"
-        y2="100%"
-      >
-        <stop offset="0%" stopColor={`hsl(${i * 45}, 100%, 65%)`} />
-        <stop offset="50%" stopColor="#FFD700" />
-        <stop offset="100%" stopColor={`hsl(${i * 45 + 30}, 100%, 50%)`} />
-      </linearGradient>
-    ))}
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-      <feMerge>
-        <feMergeNode in="coloredBlur" />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
-  </defs>
-);
+const SPIN_DURATION = 8000; // длительность анимации (мс)
+const ARROW_ANGLE = 270; // стрелка сверху (смотрит вниз)
 
-export default function Wheel({ prizes, onWin, className }) {
-  // Простой хук для получения размеров окна (без лишних зависимостей)
-  function useWindowSize() {
-    const [size, setSize] = useState({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-    useEffect(() => {
-      const handler = () =>
-        setSize({ width: window.innerWidth, height: window.innerHeight });
-      window.addEventListener("resize", handler);
-      return () => window.removeEventListener("resize", handler);
-    }, []);
-    return size;
+// ------------------------------------------------------------
+// КОМПОНЕНТ СЕКТОРОВ КОЛЕСА
+// ------------------------------------------------------------
+const WheelSectors = ({ prizes, angleStep }) => {
+  const count = prizes.length;
+  const slices = [];
+
+  for (let i = 0; i < count; i++) {
+    const startAngle = i * angleStep;
+    const endAngle = (i + 1) * angleStep;
+    const largeArc = angleStep > 180 ? 1 : 0;
+
+    // Координаты дуги сектора
+    const startRad = (startAngle * Math.PI) / 180;
+    const endRad = (endAngle * Math.PI) / 180;
+    const x1 = 200 + 180 * Math.cos(startRad);
+    const y1 = 200 + 180 * Math.sin(startRad);
+    const x2 = 200 + 180 * Math.cos(endRad);
+    const y2 = 200 + 180 * Math.sin(endRad);
+    const pathData = `M 200 200 L ${x1} ${y1} A 180 180 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+    // Позиция текста/иконки в центре сектора
+    const midAngle = startAngle + angleStep / 2;
+    const midRad = (midAngle * Math.PI) / 180;
+    const cx = 200 + 125 * Math.cos(midRad);
+    const cy = 200 + 125 * Math.sin(midRad);
+
+    // Обрезаем длинные названия
+    let label = prizes[i]?.title || "";
+    const maxLen = count <= 6 ? 14 : 10;
+    if (label.length > maxLen) {
+      label = label.slice(0, maxLen - 2) + "…";
+    }
+
+    const iconUrl = prizes[i]?.icon || "";
+
+    slices.push(
+      <g key={i} className="transition-opacity hover:opacity-90">
+        <path
+          d={pathData}
+          fill={VIP_COLORS[i % VIP_COLORS.length]}
+          stroke="#1a1a2e"
+          strokeWidth="3"
+          className="cursor-pointer hover:brightness-110"
+        />
+        <g transform={`translate(${cx}, ${cy}) rotate(${midAngle + 180})`}>
+          {iconUrl && (
+            <image
+              href={iconUrl}
+              x="-50"
+              y="-27.5"
+              width="55"
+              height="55"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          )}
+          <text
+            x={iconUrl ? "5" : "0"}
+            y="4"
+            fill="#fff"
+            fontSize={count <= 6 ? "18" : "17"}
+            fontWeight="800"
+            textAnchor="start"
+            dominantBaseline="middle"
+            style={{
+              textShadow: "0 2px 4px rgba(0,0,0,0.7)",
+              letterSpacing: "0.5px",
+            }}
+            className="pointer-events-none select-none"
+          >
+            {label}
+          </text>
+        </g>
+      </g>,
+    );
   }
 
-  const [showConfetti, setShowConfetti] = useState(false); //
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
-  const wheelRef = useRef(null);
+  return slices;
+};
+
+// ------------------------------------------------------------
+// ХУК РАЗМЕРА ОКНА
+// ------------------------------------------------------------
+function useWindowSize() {
+  const [size, setSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handler = () =>
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  return size;
+}
+
+// ------------------------------------------------------------
+// ОСНОВНОЙ КОМПОНЕНТ КОЛЕСА
+// ------------------------------------------------------------
+export default function Wheel({
+  prizes,
+  onWin,
+  className,
+  disabled = false,
+  disabledMessage = "Колесо временно недоступно",
+  onClose = null,
+  from = "main",
+}) {
+  // --- Сторы и хуки ---
+  const resetChest = useChestStore((s) => s.resetChest);
   const { openModal, closeModal } = useModalStore();
+  const { playSoundWithFade, stopCurrentSound, resumeAudioContext } =
+    useWheelSound();
+  const { initializePrizes, getRandomPrize } = usePrizeBagStore();
   const { width, height } = useWindowSize();
 
-  const count = prizes.length;
-  const angleStep = 360 / count;
+  // --- Локальный стейт ---
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const [spinning, setSpinning] = useState(false);
 
-  const renderSectors = () => {
-    const slices = [];
-    for (let i = 0; i < count; i++) {
-      const startAngle = i * angleStep;
-      const endAngle = (i + 1) * angleStep;
-      const largeArc = angleStep > 180 ? 1 : 0;
+  // --- Инициализация мешка призов из localStorage ---
+  useEffect(() => {
+    if (prizes?.length > 0) initializePrizes(prizes);
+  }, [prizes, initializePrizes]);
 
-      const startRad = (startAngle * Math.PI) / 180;
-      const endRad = (endAngle * Math.PI) / 180;
+  // --- Вычисляемые значения ---
+  const angleStep = 360 / prizes.length;
 
-      const x1 = 200 + 180 * Math.cos(startRad);
-      const y1 = 200 + 180 * Math.sin(startRad);
-      const x2 = 200 + 180 * Math.cos(endRad);
-      const y2 = 200 + 180 * Math.sin(endRad);
-
-      const pathData = `M 200 200 L ${x1} ${y1} A 180 180 0 ${largeArc} 1 ${x2} ${y2} Z`;
-
-      const midAngle = startAngle + angleStep / 2;
-      const midRad = (midAngle * Math.PI) / 180;
-
-      const r = 130; // радиус размещения группы (иконка+текст)
-      const cx = 200 + r * Math.cos(midRad);
-      const cy = 200 + r * Math.sin(midRad);
-
-      let label = prizes[i]?.title || "";
-      if (label.length > (count <= 6 ? 14 : 10)) {
-        label = label.slice(0, count <= 6 ? 12 : 8) + "…";
-      }
-      const iconUrl = prizes[i]?.icon || "";
-
-      // Поворот: текст идёт от центра наружу, но в нижней половине переворачиваем на 180°
-      let rot = midAngle + 180;
-      // if (midAngle > 90 && midAngle < 270) rot += 180;
-
-      slices.push(
-        <g key={i} className="transition-opacity hover:opacity-90">
-          <path
-            d={pathData}
-            fill={VIP_COLORS[i % VIP_COLORS.length]}
-            stroke="#1a1a2e"
-            strokeWidth="3"
-            className="cursor-pointer hover:brightness-110"
-          />
-          <g transform={`translate(${cx}, ${cy}) rotate(${rot})`}>
-            {iconUrl && (
-              <image
-                href={iconUrl}
-                x="-40"
-                y="-20"
-                width="40"
-                height="40"
-                preserveAspectRatio="xMidYMid meet"
-              />
-            )}
-            <text
-              x={iconUrl ? "15" : "0"}
-              y="4"
-              fill="#fff"
-              fontSize={count <= 6 ? "18" : "15"}
-              fontWeight="800"
-              textAnchor="start"
-              dominantBaseline="middle"
-              style={{
-                textShadow: "0 2px 4px rgba(0,0,0,0.7)",
-                letterSpacing: "0.5px",
-              }}
-              className="pointer-events-none select-none"
-            >
-              {label}
-            </text>
-          </g>
-        </g>,
-      );
-    }
-    return slices;
-  };
-
+  // ------------------------------------------------------------
+  // ЗАВЕРШЕНИЕ ВРАЩЕНИЯ — показываем модалку с выигрышем
+  // ------------------------------------------------------------
   const finishSpin = useCallback(
-    (finalRotation) => {
+    (prizeIndex) => {
       setSpinning(false);
-      const arrowWorldAngle = 270;
-      let localAngle = (arrowWorldAngle - finalRotation) % 360;
-      if (localAngle < 0) localAngle += 360;
-      const prizeIndex = Math.floor(localAngle / angleStep) % count;
       const wonPrize = prizes[prizeIndex];
+      if (!wonPrize) return;
 
-     
-    // 1. Выключаем конфетти
-    setShowConfetti(false);
-    // 2. Через мизерное время включаем – React пересоздаст Confetti и анимация начнётся заново
-    setTimeout(() => setShowConfetti(true), 50);
+      resetChest(from);
+      setShowConfetti(false);
+      setTimeout(() => setShowConfetti(true), 50);
 
-
-
-      // Открываем модалку с результатом
       openModal({
         classes: "max-w-md",
         title: "Поздравляем!",
@@ -182,9 +190,10 @@ export default function Wheel({ prizes, onWin, className }) {
               {wonPrize.title}
             </p>
             <Button
-              onClick={()=>{
+              onClick={() => {
                 closeModal();
                 setShowConfetti(false);
+                onClose?.();
               }}
               className="mt-6 px-6 py-2 bg-golden rounded-full text-black font-bold hover:bg-golden/80 transition"
             >
@@ -192,102 +201,214 @@ export default function Wheel({ prizes, onWin, className }) {
             </Button>
           </div>
         ),
+        onClose: () => onClose?.(),
       });
 
-      if (onWin) onWin(wonPrize);
+      onWin?.(wonPrize);
     },
-    [count, prizes, onWin, angleStep, openModal, closeModal],
-    
+    [prizes, resetChest, from, openModal, closeModal, onClose, onWin],
   );
 
+  // ------------------------------------------------------------
+  // ВРАЩЕНИЕ — выбираем приз и считаем угол
+  // ------------------------------------------------------------
   const spin = useCallback(() => {
-    if (spinning) return;
-    closeModal(); // закрываем модалку, если была открыта
+    if (spinning || disabled) return;
+
+    // Подготовка: закрываем модалки, запускаем звук
+    closeModal();
     setShowConfetti(false);
-    setSpinning(true);
-    const spins = 5 + Math.random() * 5;
-    const extraAngle = Math.random() * 360;
-    const newRotation = rotation + spins * 360 + extraAngle;
-    setRotation(newRotation);
-  }, [spinning, rotation, closeModal]);
+    resumeAudioContext();
+    stopCurrentSound();
+    playSoundWithFade();
 
-  const handleWheelClick = useCallback(
-    (e) => {
-      if (spinning) return;
-      e.stopPropagation();
-      spin();
-    },
-    [spinning, spin],
-  );
+    // --- Определяем целевой приз ---
+    let targetIndex;
+    let selectedPrize;
 
-  useEffect(() => {
-    if (!spinning) return;
-    const wheelEl = wheelRef.current;
-    if (!wheelEl) return;
-    const handleTransitionEnd = (e) => {
-      if (e.propertyName === "transform") {
-        finishSpin(rotation);
+    if (FORCED_PRIZE) {
+      // Режим отладки: ищем приз по названию
+      let forcedIdx = prizes.findIndex((p) => p.title === FORCED_PRIZE);
+      if (forcedIdx === -1) {
+        const normalized = FORCED_PRIZE.trim().toLowerCase();
+        forcedIdx = prizes.findIndex(
+          (p) => p.title.trim().toLowerCase() === normalized,
+        );
       }
-    };
-    wheelEl.addEventListener("transitionend", handleTransitionEnd);
-    return () =>
-      wheelEl.removeEventListener("transitionend", handleTransitionEnd);
-  }, [spinning, rotation, finishSpin]);
 
+      if (forcedIdx !== -1) {
+        targetIndex = forcedIdx;
+        selectedPrize = prizes[forcedIdx];
+      } else {
+        console.warn(
+          `[FORCED] Приз "${FORCED_PRIZE}" не найден, берём из мешка`,
+        );
+        selectedPrize = getRandomPrize();
+        targetIndex = prizes.findIndex((p) => p.title === selectedPrize?.title);
+      }
+    } else {
+      // Честный режим: берём приз из "мешка" (zustand + persist)
+      selectedPrize = getRandomPrize();
+      targetIndex = prizes.findIndex((p) => p.title === selectedPrize?.title);
+    }
+
+    // Защита от бага
+    if (targetIndex === -1 || !selectedPrize) {
+      console.error("[SPIN] Приз не найден в массиве prizes");
+      return;
+    }
+
+    // --- Считаем угол поворота ---
+    const sectorMid = targetIndex * angleStep + angleStep / 2;
+    const targetAngle = (((ARROW_ANGLE - sectorMid) % 360) + 360) % 360;
+    const currentAngle = rotation % 360;
+
+    let delta = targetAngle - currentAngle;
+    if (delta < 0) delta += 360;
+
+    const fullSpins = 8 + Math.floor(Math.random() * 4);
+    const newRotation = rotation + delta + fullSpins * 360;
+
+    console.log(
+      `[SPIN] приз: "${selectedPrize.title}" | индекс: ${targetIndex} | оборотов: ${fullSpins} | угол: ${newRotation.toFixed(1)}°`,
+    );
+
+    // --- Запускаем анимацию ---
+    setSpinning(true);
+    setRotation(newRotation);
+
+    // По завершении анимации показываем результат
+    setTimeout(() => finishSpin(targetIndex), SPIN_DURATION + 100);
+  }, [
+    spinning,
+    disabled,
+    rotation,
+    prizes,
+    angleStep,
+    closeModal,
+    resumeAudioContext,
+    stopCurrentSound,
+    playSoundWithFade,
+    finishSpin,
+    getRandomPrize,
+  ]);
+
+  // ------------------------------------------------------------
+  // ОБРАБОТЧИК КЛИКА
+  // ------------------------------------------------------------
+  const handleSpin = () => {
+    if (disabled) {
+      openModal({
+        classes: "max-w-sm",
+        title: "Колесо заблокировано",
+        content: (
+          <div className="text-center px-6 pb-6 pt-14">
+            <p className="text-lg mb-4">{disabledMessage}</p>
+            <Button
+              onClick={closeModal}
+              className="bg-golden text-black font-bold"
+            >
+              Понятно
+            </Button>
+          </div>
+        ),
+      });
+      return;
+    }
+    spin();
+  };
+
+  // ------------------------------------------------------------
+  // РЕНДЕР
+  // ------------------------------------------------------------
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center w-full",
+        "relative flex flex-col items-center justify-center w-full mb-6 ",
         className,
       )}
     >
       {showConfetti && (
-        <Confetti
-          width={width}
-          height={height}
-          numberOfPieces={300}
-          className="z-100"
-          recycle={false}
-          gravity={0.2}
-          colors={["#FFD700", "#FFA500", "#FF4500", "#FFFFFF", "#00FF00"]}
-        />
+        <div className="fixed inset-0 pointer-events-none z-50">
+          <Confetti
+            width={width}
+            height={height}
+            numberOfPieces={300}
+            recycle={false}
+            gravity={0.2}
+            colors={["#FFD700", "#FFA500", "#FF4500", "#FFFFFF", "#00FF00"]}
+          />
+        </div>
       )}
 
+      {/* Контейнер колеса */}
       <div
         className={cn(
-          "relative w-full mx-auto overflow-visible min-w-[9rem] w-[69vw] max-w-[16.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[40vh] lg:max-w-[80.5rem]",
-          "flex-shrink-0 cursor-pointer select-none",
-          spinning ? "cursor-wait" : "hover:scale-[1.02] active:scale-[0.98]",
-          "transition-transform duration-200",
+          "min-w-[14rem] min-h-[14rem] h-[40vh] max-h-[40vh]",
+          "iphone:min-w-[14rem] iphone:min-h-[14rem] iphone:h-[38vh] iphone:max-h-[38vh]",
+          "sm:min-w-[30rem] sm:min-h-[30rem] sm:h-[43vh] sm:max-h-[43vh]",
+          "flex-shrink-0 cursor-pointer select-none w-full overflow-hidden p-6",
+          spinning || disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}
-        onClick={handleWheelClick}
+        onClick={handleSpin}
         role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && handleWheelClick(e)}
-        aria-label={spinning ? "Рулетка крутится" : "Кликните чтобы крутить"}
+        tabIndex={disabled ? -1 : 0}
+        aria-label={
+          spinning
+            ? "Рулетка крутится"
+            : disabled
+              ? "Заблокировано"
+              : "Кликните чтобы крутить"
+        }
       >
-        {/* Стрелка */}
-        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+        {/* Красная стрелка-указатель */}
+        <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
           <div className="relative">
-            <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[28px] border-l-transparent border-r-transparent border-t-[#FFD700]" />
-            <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[20px] border-l-transparent border-r-transparent border-t-[#B8860B]" />
+            <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[28px] border-l-transparent border-r-transparent border-t-[#E53935]" />
+            <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[20px] border-l-transparent border-r-transparent border-t-[#B71C1C]" />
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-2 bg-white/40 rounded-full blur-[1px]" />
           </div>
         </div>
 
-        {/* SVG Колесо */}
+        {/* SVG колесо */}
         <svg
-          ref={wheelRef}
           viewBox="0 0 400 400"
           className="w-full h-full drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: spinning
-              ? "transform 3.5s cubic-bezier(0.17, 0.67, 0.12, 0.99)"
+              ? `transform ${SPIN_DURATION}ms ease-out`
               : "none",
           }}
         >
-          <GoldBorder />
+          <defs>
+            {[...Array(8)].map((_, i) => (
+              <linearGradient
+                key={i}
+                id={`grad${i + 1}`}
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor={`hsl(${i * 45}, 100%, 65%)`} />
+                <stop offset="50%" stopColor="#FFD700" />
+                <stop
+                  offset="100%"
+                  stopColor={`hsl(${i * 45 + 30}, 100%, 50%)`}
+                />
+              </linearGradient>
+            ))}
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Внешнее золотое кольцо */}
           <circle
             cx="200"
             cy="200"
@@ -305,8 +426,11 @@ export default function Wheel({ prizes, onWin, className }) {
             stroke="#1a1a2e"
             strokeWidth="2"
           />
-          {renderSectors()}
-          {/* Центр */}
+
+          {/* Сектора с призами */}
+          <WheelSectors prizes={prizes} angleStep={angleStep} />
+
+          {/* Центральная кнопка */}
           <circle
             cx="200"
             cy="200"
@@ -314,38 +438,33 @@ export default function Wheel({ prizes, onWin, className }) {
             fill="url(#grad1)"
             stroke="#1a1a2e"
             strokeWidth="4"
-            className="cursor-pointer"
           />
-          <circle cx="200" cy="200" r="28" fill="#1a1a2e" opacity="0.3" />
-          <text
-            x="200"
-            y="205"
-            textAnchor="middle"
-            fill="#FFD700"
-            fontSize="11"
-            fontWeight="bold"
-            className="pointer-events-none"
-          >
-            SPIN
-          </text>
-        </svg>
 
-        {/* Блики */}
-        <div className="absolute inset-0 rounded-full pointer-events-none">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1.5 h-1.5 bg-[#FFD700] rounded-full opacity-70"
-              style={{
-                top: `${50 + 47 * Math.sin((i * 30 * Math.PI) / 180)}%`,
-                left: `${50 + 47 * Math.cos((i * 30 * Math.PI) / 180)}%`,
-                transform: "translate(-50%, -50%)",
-                boxShadow: "0 0 6px #FFD700",
-              }}
-            />
-          ))}
-        </div>
+          <image
+            href="/images/webp/splash-poster-black.webp"
+            x="160"
+            y="160"
+            width="80"
+            height="80"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </svg>
       </div>
+
+      {/* Кнопка вращения */}
+      <Button
+        onClick={handleSpin}
+        disabled={spinning}
+        className={cn(
+          "mx-auto px-8 h-[3rem] text-lg font-bold rounded-full transition-all",
+          disabled
+            ? "bg-gray-500 cursor-not-allowed opacity-50"
+            : "bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 hover:scale-105",
+          "text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
+        )}
+      >
+        {spinning ? "КРУЧУ..." : disabled ? "ЗАБЛОКИРОВАНО" : "КРУТИТЬ"}
+      </Button>
     </div>
   );
 }

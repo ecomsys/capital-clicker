@@ -1,45 +1,87 @@
-// src/components/home/TreasureChest.jsx
 import { cn } from "@/lib/utils";
-import { useRef } from "react";
 
 export default function TreasureChest({
-  progress = 90, // 0..100, статичный
-  onCollect,
+  progress = 50, 
   chestUrl = "/images/webp/icons-png/sunduk.webp",
   className,
   ...props
 }) {
-  const cardRef = useRef(null);
-  const canCollect = progress >= 100;
+ 
 
-  const handleClick = () => {
-    if (canCollect) {
-      onCollect?.();
-    }
-  };
+  const perimeter = 369; // можно уточнить под реальную длину пути, но визуально хватает
+  const dashoffset = perimeter * (1 - progress / 100);
 
   return (
     <div
-      ref={cardRef}
-      onClick={handleClick}
       className={cn(
-        "relative flex flex-col items-center justify-center border-2 border-white/10",
-        "bg-[#202020] rounded-[0.9rem] w-full",
-        "transition-all duration-200",
-        canCollect ? "cursor-pointer hover:bg-[#202025] active:scale-95" : "cursor-not-allowed",
-        className
-      )}
+        "treasure-chest relative max-w-[6.875rem] overflow-visible",
+        "cursor-pointer",
+        className,
+      )}     
       {...props}
     >
-     
+      <div className="chest-inner chest-desktop aspect-[110/88] w-full">
+        <svg
+          viewBox="0 0 110 88"
+          className="w-full h-full overflow-visible"
+          fill="none"
+        >
+          <rect x="0" y="0" width="110" height="88" rx="16" fill="#202020" />
 
-      {/* 🎁 Сундук по центру */}
-      <div className="relative z-10 w-16 h-16 sm:w-16 sm:h-16 flex items-center justify-center">
-        <img
-          src={chestUrl}
-          alt="Сундук"
-          className="w-full h-full object-contain p-1"
-        />
+          {/* Трек */}
+          <rect
+            x="0"
+            y="0"
+            width="110"
+            height="88"
+            rx="12"
+            fill="none"
+            stroke="#4A4A4A"
+            strokeWidth="2"
+          />
+
+          {/* Прогресс – против часовой, старт с середины верха, углы наружу */}
+          <path
+            d="M 55,0
+              L 16,0
+              A 16,16 0 0 0 0,16
+              L 0,72
+              A 16,16 0 0 0 16,88
+              L 94,88
+              A 16,16 0 0 0 110,72
+              L 110,16
+              A 16,16 0 0 0 94,0
+              L 55,0"
+            fill="none"
+            stroke="#FE8D00"
+            strokeWidth="4"
+            strokeDasharray={perimeter}
+            strokeDashoffset={dashoffset}
+            strokeLinecap="round"
+            style={{ transition: "stroke-dashoffset 0.3s ease" }}
+          />
+
+          <image
+            href={chestUrl}
+            x="25"
+            y="14"
+            width="60"
+            height="60"
+            preserveAspectRatio="xMidYMid meet"
+          />
+
+          {progress >= 100 && (
+            <text
+              x="55"
+              y="44"
+              textAnchor="middle"
+              fill="#FFD700"
+              fontSize="16"
+            >
+              ✨
+            </text>
+          )}
+        </svg>
       </div>
     </div>
   );

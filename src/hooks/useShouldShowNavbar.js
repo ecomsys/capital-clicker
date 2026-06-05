@@ -1,5 +1,17 @@
 import { useLocation } from "react-router-dom"
-import { NAVBAR_ROUTES } from "@/config/bottomNavbar"
+
+const NAVBAR_ROUTES = [
+  '/home',
+  '/friends',
+  '/wheel',
+  '/clans',
+  '/profile',
+  '/shop',
+  '/prize-selection',
+  '/earn',
+  '/super-game',
+  '/mini-game'
+]
 
 export function useShouldShowNavbar() {
   const location = useLocation()

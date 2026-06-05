@@ -18,7 +18,7 @@ export default function SuperHeader({
   };
 
   return (
-    <div className="space-y-0 sm:space-y-4 lg:space-y-5">
+    <div className="space-y-0 sm:space-y-3 lg:space-y-4">
       <div>
         {/* планшет */}
         <div className="hidden sm:grid grid-cols-3 gap-2 sm:gap-4 lg:gap-5 lg:hidden">

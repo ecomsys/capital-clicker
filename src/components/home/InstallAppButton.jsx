@@ -1,29 +1,104 @@
-// src/components/home/InstallAppButton.jsx
+import { usePWAInstall } from "@/hooks/usePWAInstall";
+import useModalStore from "@/stores/useModalStore";
+import { isIOS } from "@/lib/platform";
 
-export default function InstallAppButton({ onInstall }) {
+export default function InstallAppButton() {
+  const { isInstallable, install, isInstalled } = usePWAInstall();
+
+  const { openModal } = useModalStore();
+
+  const handleClick = async () => {
+    if (isInstalled) return;
+
+    //  iOS fallback
+    if (isIOS()) {
+      openModal({
+        classes: "sm:max-w-4xl",
+        content: (
+          <div className="px-4 sm:px-10 space-y-2 text-white font-light">
+            <div className="pt-7 text-center">
+              <h3 className="text-xl font-bold mb-3">Установить приложение</h3>
+            </div>
+
+            <p className="text-center">
+              Нажмите «Поделиться» в Safari → «На экран «Домой».
+            </p>
+
+            <div className="pt-5 pb-10 text-center">
+              <img
+                src="/images/webp/ios-guide.webp"
+                alt="Инструкция"
+                className="w-full rounded-lg border border-golden"
+              />
+            </div>
+          </div>
+        ),
+      });
+
+      return;
+    }
+
+    //  install flow
+    if (isInstallable) {
+      await install();
+      return;
+    }
+
+    //  fallback
+    openModal({
+      classes: "sm:max-w-xl",
+      content: (
+        <div className="px-4 sm:px-10 space-y-2 text-white font-light text-center pb-8">
+          <div className="pt-7">
+            <h3 className="text-xl font-bold mb-3">Установка недоступна </h3>
+          </div>
+          <p className="text-red-400 text-lg">Возможные причины:</p>
+          <p className="text-red-400 text-lg">
+            1. Откройте сайт через HTTPS или используйте поддерживаемый браузер.
+          </p>
+          <p className="text-red-400 text-lg">2. Приложение уже установлено.</p>
+        </div>
+      ),
+    });
+  };
+
+  const buttonClasses = isInstalled
+    ? "flex items-center flex-col sm:flex-row bg-green-600 text-white font-bold rounded-[1rem] px-4 py-2 gap-0.5 sm:gap-3"
+    : "flex items-center flex-col sm:flex-row bg-[linear-gradient(147deg,#ffd901_0%,#ff8801_100%)] text-[#0f0f0f] font-bold rounded-[1rem] px-4 py-2 gap-0.5 sm:gap-3 transition-all hover:scale-[1.02] active:scale-95";
+
   return (
     <button
-      onClick={onInstall}
-      className="
-        flex items-center flex-col sm:flex-row 
-        bg-[linear-gradient(147deg,#ffd901_0%,#ff8801_100%)] 
-        text-[#0f0f0f] font-bold 
-        rounded-[1rem] pl-4 pr-4 sm:pr-6 py-2 gap-0.5 sm:gap-3 max-h-[3.5625rem] overflow-hidden
-        transition-all duration-300 ease-out
-        hover:scale-[102%] active:scale-95
-        shadow-[0_0_0.875rem_0_rgba(226,132,41,0.6)]
-        hover:shadow-[0_0_1.375rem_0.375rem_rgba(226,132,41,0.9)]
-      "
+      onClick={handleClick}
+      className={buttonClasses}
+      disabled={isInstalled}
     >
-      <img
-        className="w-5 h-5 sm:w-6 sm:h-6"
-        src="./images/webp/icons-png/play-market.webp"
-        alt="Play Market"
-      />
-      <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-        <span className="text-[0.5rem] sm:text-[0.75rem] leading-tight uppercase font-normal">установить</span>
-        <span className="text-[0.625rem] sm:text-[1rem] font-extrabold leading-tight uppercase">приложение</span>
-      </div>
+      {isInstalled ? (
+        <>
+          <svg className="text-white w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true">
+            <use href={`/icons/sprite/sprite.svg#info`} />
+          </svg>
+          <div className="flex flex-col text-center sm:text-left">
+            <span className="text-[0.6rem] uppercase">приложение</span>
+            <span className="text-[0.75rem] font-bold uppercase">
+              установлено
+            </span>
+          </div>
+        </>
+      ) : (
+        <>
+          <img
+            className="w-5 h-5 sm:w-6 sm:h-6"
+            src="./images/webp/icons-png/play-market.webp"
+            alt="Install"
+          />
+          <div className="flex flex-col text-center sm:text-left">
+            <span className="text-[0.6rem] uppercase">установить</span>
+            <span className="text-[0.75rem] font-bold uppercase">
+              приложение
+            </span>
+          </div>
+        </>
+      )}
     </button>
   );
 }

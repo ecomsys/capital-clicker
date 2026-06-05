@@ -1,5 +1,9 @@
 // src/components/home/ClickBear.jsx
-export default function ClickBear({ onClick, percent = 0, prize }) {
+import { useRef, useEffect } from "react";
+
+export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
+  const circleRef = useRef(null);
+
   const radius = 82;
   const strokeWidth = 6;
   const normalizedRadius = radius - strokeWidth / 2;
@@ -13,18 +17,37 @@ export default function ClickBear({ onClick, percent = 0, prize }) {
   const endX = centerX + normalizedRadius * Math.sin(angle);
   const endY = centerY - normalizedRadius * Math.cos(angle);
 
+  // Динамический размер кружка и текста
+  let radiusCircle = 8 + (percent / 100) * 13; // от 6 до 26
+  if (isFull) radiusCircle = 22; // при 100% чуть больше
+  const fontSize = isFull ? 16 : 6 + (percent / 100) * 8; // от 8 до 18
+
+  // При достижении 100% и наличии колбэка передаём координаты кружка
+  useEffect(() => {
+    if (isFull && onClaim && circleRef.current) {
+      const rect = circleRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      onClaim(centerX, centerY);
+    }
+  }, [isFull, onClaim]);
+
   return (
-    <div className="relative cursor-pointer transition-transform active:scale-95 inline-block" onClick={onClick}>
-      <div className="relative w-full  mx-auto overflow-visible
-      min-w-[9rem] w-[69vw] max-w-[13.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[33vh] lg:max-w-[21.5rem] cursor-pointer transition-transform active:scale-95
-      ">
-        <img 
-          src="/images/webp/level-bears/level-1.webp" 
-          alt="Уровень 1" 
-          className="relative w-full h-full object-cover "
+    <div
+      className="relative cursor-pointer transition-transform active:scale-95 inline-block"
+      onClick={onClick}
+    >
+      <div
+        className="relative w-full mx-auto overflow-visible
+      min-w-[9rem] w-[69vw] max-w-[14.75rem] xss:w-[78vw] xss:max-w-[20rem] sm:w-[38vw] sm:max-w-[25rem] sm:min-w-[14.875rem] lg:w-[33vh] lg:max-w-[21.5rem] cursor-pointer transition-transform active:scale-95"
+      >
+        <img
+          src="/images/webp/level-bears/level-1.webp"
+          alt="Уровень 1"
+          className="relative w-full h-full object-cover"
           draggable="false"
         />
-        
+
         <div className="absolute -inset-3 flex items-center justify-center pointer-events-none overflow-visible">
           <svg
             className="w-full h-full overflow-visible z-10"
@@ -32,7 +55,13 @@ export default function ClickBear({ onClick, percent = 0, prize }) {
             preserveAspectRatio="xMidYMid meet"
           >
             <defs>
-              <linearGradient id="gradProgress" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient
+                id="gradProgress"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
                 <stop offset="0%" stopColor="#260957" />
                 <stop offset="100%" stopColor="#5E27BD" />
               </linearGradient>
@@ -60,16 +89,17 @@ export default function ClickBear({ onClick, percent = 0, prize }) {
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
               transform="rotate(-90 90 90)"
-              style={{ transition: 'stroke-dashoffset 0.2s linear' }}
+              style={{ transition: "stroke-dashoffset 0.2s linear" }}
             />
-            
-            {/* Кружок виден всегда, даже при 0% */}
+
+            {/* Кружок с призом – меняет размер в зависимости от прогресса */}
             <g>
               <circle
+                ref={circleRef}
                 cx={endX}
                 cy={endY}
-                r="14"
-                fill={isFull ? "#FBBF24" : "#6B2BDA"}                 
+                r={radiusCircle}
+                fill={isFull ? "#FBBF24" : "#6B2BDA"}
                 className={isFull ? "animate-pulse" : ""}
               />
               <text
@@ -78,7 +108,7 @@ export default function ClickBear({ onClick, percent = 0, prize }) {
                 textAnchor="middle"
                 dominantBaseline="central"
                 fill={isFull ? "#260957" : "#FFFFFF"}
-                fontSize="10"
+                fontSize={fontSize}
                 fontWeight="bold"
                 pointerEvents="none"
               >

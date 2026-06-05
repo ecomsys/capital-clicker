@@ -7,36 +7,97 @@ import InstallAppButton from "@/components/home/InstallAppButton";
 import ClickBear from "@/components/home/ClickBear";
 import { AdBanner } from "@/components/basic/adBanner";
 import { useFlyingPlus } from "@/hooks/useFlyingPlus";
+import { cn } from "@/lib/utils";
+import { useFlyingCoin } from "@/hooks/useFlyingCoin";
+import { playSound, unlockAudio } from "@/audio/manager";
+import { useFlyPrize } from "@/hooks/useFlyPrize";
+import useChestStore from "@/stores/useChestStore";
+
+// Массив призов (от 1 до 10 рублей)
+const PRIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 export default function HomePage({
   adBanner = { href: "https://example.com", imageSrc: null, title: "РЕКЛАМА" },
 }) {
-  const [clicks, setClicks] = useState(0);
-  const [energy, setEnergy] = useState(1000);
+  const { flyPrizeFromPoint } = useFlyPrize();
+  const { incrementProgress } = useChestStore();
+
+  const audioUnlockedRef = useRef(false);
+  const [clicks, setClicks] = useState(0); // валюта (общее количество кликов)
+  const [energy, setEnergy] = useState(1000); // энергия
+  const [progress, setProgress] = useState(0); // прогресс для медведя (0..100)
+  const [prizeIndex, setPrizeIndex] = useState(0); // индекс текущего приза
+
   const counterRef = useRef(null);
   const { flyFromClick } = useFlyingPlus();
+  const { flyFromClick: flyCoin } = useFlyingCoin();
 
-  // Прогресс от 0 до 100 (каждый клик = +1%)
-  const percent = Math.min(clicks, 100);
+  // Текущий приз (в рублях)
+  const currentPrize = PRIZES[prizeIndex];
 
+  // Обработчик получения приза (вызывается из ClickBear при progress >= 100)
+  const handleClaimPrize = useCallback(
+    (startX, startY) => {
+      // Анимация полёта приза к балансу
+      flyPrizeFromPoint(startX, startY, ".user-balance");
+
+      // Здесь можно добавить логику начисления баланса
+      console.log(`Получен приз: ${currentPrize} руб.`);
+
+      // Переход к следующему призу (зацикливание)
+      setPrizeIndex((prev) => (prev + 1) % PRIZES.length);
+
+      // Сброс прогресса
+      setProgress(0);
+    },
+    [currentPrize, flyPrizeFromPoint],
+  );
+
+  // Обработчик клика по медведю
   const handleClickBear = useCallback(
-    (event) => {
+    async (event) => {
       if (energy <= 0) return;
       event.stopPropagation();
+
+      if (energy > 0) {
+        // ...
+        incrementProgress('main', 10); // +10 к прогрессу сундука
+      }
+
+      // Разблокируем звук при первом клике
+      if (!audioUnlockedRef.current) {
+        await unlockAudio("/sounds/click.mp3");
+        audioUnlockedRef.current = true;
+      }
+      // Играем звук клика
+      await playSound("/sounds/click.mp3", { volume: 0.35 }).catch((e) =>
+        console.warn(e),
+      );
+
+      // Анимации
+      flyCoin(event);
       flyFromClick(event, counterRef);
+
+      // Увеличиваем валюту (клики) на 1
       setClicks((prev) => prev + 1);
+      // Уменьшаем энергию
       setEnergy((prev) => prev - 1);
+      // Увеличиваем прогресс (до 100)
+      setProgress((prev) => Math.min(prev + 1, 100));
     },
-    [energy, flyFromClick],
+    [energy, flyFromClick, flyCoin, incrementProgress],
   );
 
   const handleInstall = () =>
     alert("PWA установка – здесь будет логика beforeinstallprompt");
 
+  // Текущий процент для отображения в медведе
+  const bearPercent = Math.min(progress, 100);
+
   return (
-    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-55 xs:pb-60 sm:pb-60 lg:pb-78">
+    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-52 sm:pb-63 lg:pb-76">
       <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
-      
+
       <HomeHeader />
 
       <div className="grid grid-cols-3 items-center mt-6 sm:mt-8">
@@ -51,12 +112,28 @@ export default function HomePage({
         </div>
       </div>
 
-      {/* Передаём процент в ClickBear */}
-      <div className="flex justify-center mt-1 sm:mt-6 lg:mt-2 mb-8 lg:mb-4  flex-1 items-center">
-        <ClickBear onClick={handleClickBear} percent={percent} prize="12P" />
+      <div
+        className={cn(
+          "flex justify-center flex-1 items-center",
+          "mt-1 mb-4",
+          "sm:mt-6 sm:mb-4",
+          "lg:mt-2 lg:mb-4",
+        )}
+      >
+        <ClickBear
+          onClick={handleClickBear}
+          percent={bearPercent}
+          prize={`${currentPrize}₽`}
+          onClaim={handleClaimPrize}
+        />
       </div>
-      <div className="flex justify-center mb-3 lg:mb-0">
-        <EnergyDisplay energy={energy} iconClasses="w-8 h-8 sm:w-8 sm:h-8" textClasses="text-[1.5rem] sm:text-[1.5rem]"/>
+
+      <div className="flex justify-center mb-8 sm:mb-4 lg:mb-3">
+        <EnergyDisplay
+          energy={energy}
+          iconClasses="w-8 h-8 sm:w-8 sm:h-8"
+          textClasses="text-[1.5rem] sm:text-[1.5rem]"
+        />
       </div>
     </div>
   );

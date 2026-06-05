@@ -39,7 +39,7 @@ export default function Modal({ className, closeOnBackdropClick = true }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-1000 bg-black/70"
+            className="fixed inset-0 z-1000 bg-black/70 "
             onClick={handleBackdropClick}
           />
 
@@ -53,7 +53,7 @@ export default function Modal({ className, closeOnBackdropClick = true }) {
           >
             <div
               className={cn(
-                "relative pointer-events-auto w-full",
+                "relative pointer-events-auto w-full ",
                 "bg-[#121212]",
                 "rounded-t-[1.5rem] sm:rounded-[1.5rem]",
                 "border-t border-[#fe8d00] sm:border-t-0 sm:border",

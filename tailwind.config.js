@@ -26,7 +26,7 @@ export default {
   theme: {
     screens: {
       xs: "21.875rem", //350
-      xss: "25.625rem",   //410
+      iphone: "25.625rem",   //410
       ssm: "36rem",   //576
       sm: "40rem", // маленькие планшеты 640
       md: "48rem", // планшеты 768

@@ -30,7 +30,7 @@ export default function Layout() {
   // const isClansPage = location.pathname === "/clans";
   const isFriendsPage = location.pathname === "/friends";
   const isProfilePage = location.pathname === "/profile";
-   const isShopPage = location.pathname === "/shop";
+  const isShopPage = location.pathname === "/shop";
   const isEarnPage = location.pathname === "/earn";
   const isPrizeSelectionPage = location.pathname === "/prize-selection";
   const isSuperGamePage = location.pathname === "/super-game";
@@ -41,8 +41,8 @@ export default function Layout() {
     isProfilePage === true ||
     isFriendsPage === true ||
     isEarnPage === true ||
-    isPrizeSelectionPage === true || 
-    isShopPage === true ;
+    isPrizeSelectionPage === true ||
+    isShopPage === true;
 
   return (
     <OrientationGuard className={`${isSplash ? "" : "bg-black"}`}>
@@ -54,7 +54,7 @@ export default function Layout() {
 
           {showNavbar && (
             <div
-             className={`${isBgFull ? "bg-black" : ""} z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 pb-[2.5rem] sm:pb-[3.125rem] 2xl:pb-[4.375rem]
+              className={`${isBgFull ? "bg-black" : ""} z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 pb-[2.5rem] sm:pb-[3.125rem] lg:pb-[3.875rem]
             ${isFixed ? "fixed max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)]" : "absolute "} 
             `}
             >

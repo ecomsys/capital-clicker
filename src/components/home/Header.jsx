@@ -17,7 +17,7 @@ export default function HomeHeader({
         {/* Мобилка/планшет */}
         <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-5 lg:hidden">
           <GlassButton
-            className="text-white text-[1rem] justify-start font-semibold gap-2 px-2 sm:gap-3 sm:px-3"
+            className="user-balance text-white text-[1rem] justify-start font-semibold gap-2 px-2 sm:gap-3 sm:px-3"
             href="/deposit"
             icon="rub"
           >
@@ -34,7 +34,7 @@ export default function HomeHeader({
         {/* Десктоп */}
         <div className="hidden lg:flex lg:justify-between gap-2 sm:gap-4 lg:gap-5">
           <GlassButton
-            className="text-white justify-normal text-[1.5rem] font-bold min-w-[14.75rem]"
+            className="user-balance text-white justify-normal text-[1.5rem] font-bold min-w-[14.75rem]"
             href="/deposit"
             icon="rub"
           >

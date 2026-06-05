@@ -2,15 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFullscreen } from "@/hooks/useFullscreen";
+import { isMobile } from "@/lib/platform";
 
-const isMobile = () => {
-  if (typeof window === "undefined") return false;
-  const ua = navigator.userAgent || "";
-  const isMobileUA =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-  const isSmallScreen = window.innerWidth <= 768;
-  return isMobileUA || isSmallScreen;
-};
 
 export default function SplashScreen() {
   const { openFullscreen } = useFullscreen();
@@ -80,7 +73,7 @@ export default function SplashScreen() {
   const handleVideoEnd = () => setVideoEnded(true);
 
   return (
-    <div className="min-h-screen eco-container bg-black flex flex-col py-[3.125rem] sm:py-[6.25rem]">
+    <div className="min-h-[100dvh] eco-container bg-black flex flex-col py-[3.125rem] sm:py-[6.25rem]">
       <h1 className="text-[3rem] sm:text-[4rem] font-extrabold text-white uppercase text-center">
         КАПИТАЛ
       </h1>

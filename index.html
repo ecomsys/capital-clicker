@@ -1,16 +1,38 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" class="scroll-hide">
   <head>
     <meta charset="UTF-8" />
-    <!-- Стандартная иконка для вкладок браузера -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <!-- Явная ссылка для iOS (некоторые версии Safari игнорируют manifest) -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Viewport: viewport-fit=cover растягивает контент под челку/Dynamic Island. 
+         user-scalable=no запрещает случайный зум при быстрых кликах (критично для кликера!) -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
     <title>Capital Clicker</title>
     <meta name="description" content="Офлайн-кликер с накоплением капитала" />
+
+    <!-- Иконки -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- === PWA мета-теги для iOS (ОБЯЗАТЕЛЬНЫ, манифест их не заменяет) === -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Capital" />
+
+    <!-- === Для Android/Chrome === -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#000000" />
+
+   
   </head>
-  <body class="bg-black">
+
+  <body class="bg-black scroll-hide">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

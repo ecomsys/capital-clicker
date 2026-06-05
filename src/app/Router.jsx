@@ -13,7 +13,8 @@ import PrizeSelectionPage from "@/pages/PrizeSelectionPage";
 import EarnPage from "@/pages/EarnPage";
 import ChatPage from "@/pages/ChatPage";
 import SuperGamePage from "@/pages/SuperGamePage";
-import WheelPage from "@/pages/WheelPage";
+import WheelPage from "@/pages/WheelPage/index";
+import MiniGamePage from "@/pages/MiniGame";
 
 // Дополнительно
 import { Animate } from "@/components/Animate";
@@ -38,6 +39,7 @@ export function AppRouter() {
           <Route path="/chat" element={<Animate><ChatPage /></Animate>} />
           <Route path="/super-game" element={<Animate><SuperGamePage /></Animate>} />
           <Route path="/wheel" element={<Animate><WheelPage /></Animate>} />
+          <Route path="/mini-game" element={<Animate><MiniGamePage /></Animate>} />
         </Route>
 
         {/* Fallback: если путь неизвестен → на заставку */}

@@ -2,6 +2,8 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useFullscreen } from "@/hooks/useFullscreen"; 
+import { isMobile } from "@/lib/platform";
+
 
 export default function BottomNavbar() {
   const location = useLocation();
@@ -9,7 +11,7 @@ export default function BottomNavbar() {
 
   const navItems = [
     { to: "/home", icon: "home", label: "Главная" },
-    { to: "/wheel", icon: "game", label: "Мини-Игра" },
+    { to: "/mini-game", icon: "game", label: "Мини-Игра" },
     { to: "/friends", icon: "friends", label: "Друзья" },
     { to: "/earn", icon: "earn", label: "Заработать" },
     { to: "/clans", icon: "clan", label: "Кланы" },
@@ -27,8 +29,8 @@ export default function BottomNavbar() {
     const handleLinkClick = () => {
     // Вызываем полный экран только если мы еще не в нем, 
     // чтобы избежать лишних вызовов API
-    if (!isFullscreen) {
-      openFullscreen();
+    if (!isFullscreen && isMobile()) {
+      // openFullscreen();
     }
   };
 
