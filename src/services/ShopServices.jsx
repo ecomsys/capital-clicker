@@ -12,7 +12,7 @@ class ShopServices {
       content: (
         <ClickSliderContent
           title="Отключить рекламу"
-          description="Если реклама вам мешает, можете отключить ее за небольшую плату"
+          description=""
           onBuy={(price, stepIndex) => {
             console.log(`Покупка на ${price}₽, шаг ${stepIndex}`);
             alert(`Купить за ${price} ₽?`);
@@ -35,7 +35,30 @@ class ShopServices {
 
   // купить клики
   buyClick() {
-    alert("Купить клики !");
+     openModal({
+      classes: "w-full sm:max-w-[33.75rem]",
+      content: (
+        <ClickSliderContent
+          title="Купить клики"
+          description=""
+          onBuy={(price, stepIndex) => {
+            console.log(`Покупка на ${price}₽, шаг ${stepIndex}`);
+            alert(`Купить за ${price} ₽?`);
+          }}
+          steps={[
+            { info: "1000 кликов", price: "1" },
+            { info: "5 000 кликов", price: "5" },
+            { info: "10 000 кликов", price: "10" },
+            { info: "50 000 кликов", price: "50" },
+            { info: "100 000 кликов", price: "100" },
+            { info: "250 000 кликов", price: "250" },
+            { info: "500 000 кликов", price: "500" },
+            { info: "1 000 000 кликов", price: "1000" },            
+          ]}
+          defaultIndex={2}
+        />
+      ),
+    });
   }
 
   // авто кликкер
@@ -49,13 +72,14 @@ class ShopServices {
             alert(`Купить за ${price} ₽?`);
           }}
           steps={[
-            { info: "2 кл/сек", price: "50" },
-            { info: "3 кл/сек", price: "100" },
-            { info: "4 кл/сек", price: "150" },
-            { info: "5 кл/сек", price: "550" },
-            { info: "10 кл/сек", price: "1000" },
-            { info: "15 кл/сек", price: "1500" },
-            { info: "20 кл/сек", price: "50000" },
+            { info: "1 кл/сек", price: "100" },
+            { info: "2 кл/сек", price: "150" },
+            { info: "3 кл/сек", price: "200" },
+            { info: "4 кл/сек", price: "250" },
+            { info: "5 кл/сек", price: "300" },
+            { info: "10 кл/сек", price: "500" },
+            { info: "15 кл/сек", price: "750" },
+            { info: "20 кл/сек", price: "1000" },
           ]}
           defaultIndex={3}
         />
