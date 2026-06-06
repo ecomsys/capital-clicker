@@ -2,12 +2,13 @@
 
 import { AdBanner } from "@/components/basic/adBanner";
 import { GlassMessage } from "@/components/basic/GlassMessage";
+import EmptyMiniState from "@/components/mini/EmptyMiniState";
 
 // импортируем переменные рекламы и приманки пока из файла
 import { adBanner, lastWinner } from "@/constants/honeyPot.site.js";
-
 export default function MiniGamePage() {
-  return (
+
+  return (    
     <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-20 sm:pb-40 lg:pb-50">
       <AdBanner
         href={adBanner.href}
@@ -24,7 +25,7 @@ export default function MiniGamePage() {
       </GlassMessage>
 
       <div className="mt-3 sm:mt-8 flex-1 flex items-center justify-center">
-        <h1 className="text-xl sm:text-3xl uppercase textt-center"> Здесь будет мини-игра.</h1>
+        <EmptyMiniState />
       </div>
     </div>
   );

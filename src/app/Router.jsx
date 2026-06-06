@@ -14,7 +14,7 @@ import EarnPage from "@/pages/EarnPage";
 import ChatPage from "@/pages/ChatPage";
 import SuperGamePage from "@/pages/SuperGamePage";
 import WheelPage from "@/pages/WheelPage/index";
-import MiniGamePage from "@/pages/MiniGame";
+import MiniGamePage from "@/pages/MiniGamePage";
 
 // Дополнительно
 import { Animate } from "@/components/Animate";
