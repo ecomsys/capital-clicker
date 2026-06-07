@@ -9,22 +9,26 @@ import { useShouldShowNavbar } from "@/hooks/useShouldShowNavbar";
 import OrientationGuard from "@/components/OrientationGuard";
 import BottomNavbar from "@/components/basic/BottomNavbar";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 // Лейаут компонент
 export default function Layout() {
   const location = useLocation();
   const showNavbar = useShouldShowNavbar();
 
   // сравнение локаций
-  const isSplash = location.pathname === "/splash";  
-  
+  const isSplash = location.pathname === "/splash";
+
   const isFixed = true;
- 
+
   return (
     <OrientationGuard className={`${isSplash ? "" : "bg-black"}`}>
       <div className="eco-container">
         <div className="min-h-screen flex flex-col relative">
           <main className="flex-1">
-            <Outlet />
+            <TooltipProvider>
+              <Outlet />
+            </TooltipProvider>
           </main>
 
           {showNavbar && (

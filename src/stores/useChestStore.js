@@ -4,8 +4,8 @@ import { persist } from "zustand/middleware";
 
 // Лимиты для каждого сундука – можно менять под свои нужды
 const CHEST_LIMITS = {
-  main: 15000, // для главной страницы
-  superGame: 20000, // для супер-игры (пример другого значения)
+  main: 5000, // для главной страницы
+  superGame: 5000, // для супер-игры (пример другого значения)
 };
 
 const useChestStore = create(
@@ -64,9 +64,10 @@ const useChestStore = create(
 
       // Сбросить всё
       resetAll: () => set({ chests: { main: 0, superGame: 0 } }),
+
     }),
     {
-      name: "chest-progress", // ключ в localStorage
+      name: "capital-clicker-chest-progress", // ключ в localStorage
     },
   ),
 );

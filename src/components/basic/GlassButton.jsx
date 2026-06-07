@@ -1,5 +1,3 @@
-// src/components/basic/GlassButton.jsx
-
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -44,15 +42,31 @@ export const GlassButton = forwardRef(
       </>
     );
 
-    // Если передан Component или href — используем Link
-    if (href || Component !== "button") {
+    // Если есть href – используем Link с пробросом ref
+    if (href) {
       return (
-        <Link to={href} className={baseStyles} {...props}>
+        <Link to={href} className={baseStyles} ref={ref} {...props}>
           {content}
         </Link>
       );
     }
 
+    // Если передан нестандартный компонент (например, "div")
+    if (Component !== "button") {
+      const CustomComponent = Component;
+      return (
+        <CustomComponent
+          className={baseStyles}
+          ref={ref}
+          onClick={onClick}
+          {...props}
+        >
+          {content}
+        </CustomComponent>
+      );
+    }
+
+    // Обычная кнопка
     return (
       <button onClick={onClick} className={baseStyles} ref={ref} {...props}>
         {content}

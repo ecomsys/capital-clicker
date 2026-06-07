@@ -1,11 +1,9 @@
 // src/pages/HomePage.jsx
-
-// таилвинд мерж
+import { useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { useState, useRef, useCallback } from "react";
 
-// компоонеты
-import HomeHeader from "@/components/home/Header";
+// компоненты
+import Header from "@/components/basic/Header";
 import ClickCounter from "@/components/home/ClickCounter";
 import EnergyDisplay from "@/components/home/EnergyDisplay";
 import InstallAppButton from "@/components/home/InstallAppButton";
@@ -24,86 +22,95 @@ import { useDustEffect } from "@/hooks/useDustEffect";
 
 // сторы
 import useChestStore from "@/stores/useChestStore";
+import useBalanceStore from "@/stores/useBalanceStore";
+import useHomeBearStore from "@/stores/useHomeBearStore"; // ← новый стор
 
-// импортируем переменные рекламы и приманки пока из файла
 import { adBanner } from "@/constants/honeyPot.site.js";
 
-// Массив денежных призов за прохождения кругового прогресса (от 1 до 10 рублей за круг по очереди, потом заново)
-const PRIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+function generateProgressivePrizes(length, start = 1, step = 1) {
+  return Array.from({ length }, (_, i) => start + i * step);
+}
+
+const PRIZES = generateProgressivePrizes(100);
 
 export default function HomePage() {
   const { flyPrizeFromPoint } = useFlyPrize();
-  const { incrementProgress } = useChestStore();
+  const { incrementProgress: incrementChestProgress } = useChestStore();
+  const { balance, addBalance } = useBalanceStore();
 
-  const [clicks, setClicks] = useState(0); // валюта (общее количество кликов)
-  const [energy, setEnergy] = useState(1000); // энергия
-  const [progress, setProgress] = useState(0); // прогресс для медведя (0..100)
-  const [prizeIndex, setPrizeIndex] = useState(0); // индекс текущего приза
+  // Используем home bear store
+  const {
+    progress,
+    prizeIndex,
+    clicks,
+    energy,
+    incrementProgress,
+    resetProgress,
+    incrementPrizeIndex,
+    addClick,
+    decrementEnergy,
+  } = useHomeBearStore();
 
   const counterRef = useRef(null);
   const { flyFromClick } = useFlyingPlus();
   const { flyFromClick: flyCoin } = useFlyingCoin();
   const { dustOnClick } = useDustEffect();
 
-  // Текущий приз (в рублях)
-  const currentPrize = PRIZES[prizeIndex];
+  const currentPrize = PRIZES[prizeIndex % PRIZES.length];
 
-  // Обработчик получения приза (вызывается из ClickBear при progress >= 100)
   const handleClaimPrize = useCallback(
-    (startX, startY) => {
-      // Анимация полёта приза к балансу
-      flyPrizeFromPoint(startX, startY, ".user-balance");
-
-      // Здесь можно добавить логику начисления баланса
+    async (startX, startY) => {
+      await flyPrizeFromPoint(startX, startY, ".user-balance");
       console.log(`Получен приз: ${currentPrize} руб.`);
-
-      // Переход к следующему призу (зацикливание)
-      setPrizeIndex((prev) => (prev + 1) % PRIZES.length);
-
-      // Сброс прогресса
-      setProgress(0);
+      addBalance(currentPrize);
+      incrementPrizeIndex();
+      resetProgress();
     },
-    [currentPrize, flyPrizeFromPoint],
+    [
+      currentPrize,
+      flyPrizeFromPoint,
+      addBalance,
+      incrementPrizeIndex,
+      resetProgress,
+    ],
   );
 
-  // Обработчик клика по медведю
   const handleClickBear = useCallback(
-    async (event) => {
+    (event) => {
       if (energy <= 0) return;
       event.stopPropagation();
 
-      if (energy > 0) {
-        incrementProgress("main", 10); // +10 к прогрессу сундука
-      }
-
+      incrementChestProgress("main", 10);
       playSound("/sounds/click.mp3", { volume: 0.35 }).catch(console.warn);
 
-      // Анимации
       flyCoin(event);
       flyFromClick(event, counterRef);
       dustOnClick(event);
 
-      // Увеличиваем валюту (клики) на 1
-      setClicks((prev) => prev + 1);
-      // Уменьшаем энергию
-      setEnergy((prev) => prev - 1);
-      // Увеличиваем прогресс (до 100)
-      setProgress((prev) => Math.min(prev + 1, 100));
+      addClick();
+      decrementEnergy();
+      incrementProgress(1);
     },
-    [energy, flyFromClick, flyCoin, incrementProgress],
+    [
+      energy,
+      flyFromClick,
+      flyCoin,
+      dustOnClick,
+      incrementChestProgress,
+      addClick,
+      decrementEnergy,
+      incrementProgress,
+    ],
   );
 
-  const handleInstall = () =>
-    alert("PWA установка – здесь будет логика beforeinstallprompt");
+  const handleInstall = () => alert("PWA установка");
 
-  // Текущий процент для отображения в медведе
   const bearPercent = Math.min(progress, 100);
 
   return (
     <div className="min-h-screen min-h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-1 sm:pb-29 lg:pb-38">
       <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
-
-      <HomeHeader />
+      <Header userBalance={balance} />
 
       <div className="grid grid-cols-3 items-center mt-6 sm:mt-8">
         <div className="justify-self-start">

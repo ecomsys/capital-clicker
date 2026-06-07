@@ -1,10 +1,10 @@
 // src/components/super/GameModeToggle.jsx
 import { cn } from "@/lib/utils";
-import useSettingsStore, { SUPER_GAME_MODES } from "@/stores/useSettingsStore";
+import useSuperBearStore, { SUPER_GAME_MODES } from "@/stores/useSuperBearStore";
 import { Button } from "../ui/Button";
 
 export default function GameModeToggle({ className = "" }) {
-  const { superGameMode, setSuperGameMode } = useSettingsStore();
+  const { superGameMode, setSuperGameMode } = useSuperBearStore();
 
   return (
     <div className={cn(

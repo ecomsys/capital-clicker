@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware"; // ← Импортируем persist
 
-const usePrizeBagStore = create(
+const useWheelPrizesBagStore = create(
   persist(
     (set, get) => ({
       availablePrizes: [],
@@ -73,4 +73,4 @@ const usePrizeBagStore = create(
   ),
 );
 
-export default usePrizeBagStore;
+export default useWheelPrizesBagStore;

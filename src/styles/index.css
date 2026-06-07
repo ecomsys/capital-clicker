@@ -2,15 +2,15 @@
 @config "../../tailwind.config.js";
 
 @import "./fonts.css";
-
 @import "tw-animate-css";
-
 @import "shadcn/tailwind.css";
-
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
 
+/* ==========================================================================
+   Базовые стили
+   ========================================================================== */
 body {
   @apply font-sans text-white;
 }
@@ -18,14 +18,12 @@ body {
 @layer base {
   html,
   body {
-    touch-action: manipulation; /* Убираем 300мс задержку тапов */
-    -webkit-user-select: none; /* Запрет выделения текста (опционально) */
+    touch-action: manipulation;   /* убираем задержку tap (300ms) */
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    /* overflow-x: hidden; */
   }
 
-  /* Динамическая высота вьюпорта для мобильных */
+  /* Переменные для safe-area (iPhone) */
   :root {
     --safe-top: env(safe-area-inset-top);
     --safe-bottom: env(safe-area-inset-bottom);
@@ -35,22 +33,19 @@ body {
 
   * {
     @apply border-border outline-ring/50;
+    -webkit-touch-callout: none;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
 
-  * {
-     touch-action: manipulation;
-    -webkit-touch-callout: none;
-    user-select: none;
-  }
-
   img {
-    pointer-events: none;
+    pointer-events: none;         /* отключаем контекстное меню на картинках */
   }
 
   img,
@@ -59,34 +54,85 @@ body {
   }
 }
 
-.scrollable {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+/* ==========================================================================
+   Утилиты для скролла
+   ========================================================================== */
+/* Полностью скрыть скроллбар (но скроллинг остаётся) */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/*=======================================================================================*/
-/* Поддержка safe area для iPhone                                                        */
-/*=======================================================================================*/
-.safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+/* Полупрозрачный, тонкий скроллбар, появляется при наведении */
+.scroll-hide {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(254, 141, 0, 0.3) transparent;
+}
+.scroll-hide::-webkit-scrollbar {
+  width: 0.375rem;
+  height: 0.375rem;
+  background: transparent;
+}
+.scroll-hide::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-hide::-webkit-scrollbar-thumb {
+  background: rgba(254, 141, 0, 0.3);
+  border-radius: 0.625rem;
+  transition: background 0.2s;
+}
+.scroll-hide::-webkit-scrollbar-thumb:hover {
+  background: rgba(254, 141, 0, 0.6);
+}
+/* Показываем скроллбар только при наведении на контейнер */
+.scroll-hide:not(:hover)::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
 }
 
-/* Убираем highlight при тапе на мобильных */
-* {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-
-/* Плавный скролл и анимации */
-@media (prefers-reduced-motion: no-preference) {
-  .transition-all {
-    transition-behavior: allow-discrete;
+/* ==========================================================================
+   Компоненты (контейнер, анимация +1 и пр.)
+   ========================================================================== */
+@layer components {
+  .eco-container {
+    width: 100%;
+    max-inline-size: 123.75rem; /* 1980px */
+    min-inline-size: 20rem;     /* 320px */
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 40rem) {    /* 640px */
+    .eco-container {
+      padding-inline: 2rem;
+    }
+  }
+  @media (min-width: 68.75rem) { /* 1100px */
+    .eco-container {
+      padding-inline: 19.1875rem; /* 307px */
+    }
   }
 }
 
-/*=======================================================================================*/
-/* KeyFrames                                                                             */
-/*=======================================================================================*/
+/* Стили для летающей цифры "+1" */
+.flying-plus {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffd966;
+  text-shadow: 0 0 0.375rem #b45309, 0 0 0.125rem #000;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   Анимации
+   ========================================================================== */
+/* Fade In */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -101,122 +147,107 @@ body {
   animation: fadeIn 0.3s ease-out;
 }
 
-/*=======================================================================================*/
-/* container                                                                        */
-/*=======================================================================================*/
-@layer components {
-  .eco-container {
-    width: 100%;
-    /* 1980 */
-    max-inline-size: 123.75rem;
-    /* 320 */
-    min-inline-size: 20rem;
-    margin-inline: auto;
-    /* 16 */
-    padding-inline: 1rem;
+/* Появление результата (сдвиг сверху) */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  /* 640 */
-  @media (min-width: 40rem) {
-    .eco-container {
-      /* 32 */
-      padding-inline: 2rem;
-    }
-  }
-
-  /* 1100 */
-  @media (min-width: 68.75rem) {
-    .eco-container {
-      /* 307 */
-      padding-inline: 19.1875rem;
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
-
-/********************************************
-Скрыть скролл
-*******************************************/
-
-/* Для WebKit (Chrome, Safari, новее Edge) */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
 }
 
-/* Для Firefox */
-.scrollbar-none {
-  scrollbar-width: none;
+/* Сдвиг справа (выезжание) */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s ease-in forwards;
 }
 
-/* Для IE/Edge старых (опционально) */
-.scrollbar-none {
-  -ms-overflow-style: none;
+/* Анимация счётчика (золотой, с увеличением) */
+@keyframes counterPop {
+  0% {
+    transform: scale(1);
+    color: white;
+  }
+  50% {
+    transform: scale(1.2);
+    color: #fe8d00; /* golden */
+  }
+  100% {
+    transform: scale(1);
+    color: white;
+  }
 }
-/********************************************
-Ненавязчивый узкий скроллбар
-*******************************************/
-.scroll-hide {
-  /* Для Firefox: узкий и полупрозрачный */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(254, 141, 0, 0.3) transparent;
-}
-
-/* Для Chrome/Edge/Safari */
-.scroll-hide::-webkit-scrollbar {
-  width: 0.375rem; /* ширина вертикального скролла */
-  height: 0.375rem; /* высота горизонтального */
-  background: transparent;
-}
-
-.scroll-hide::-webkit-scrollbar-track {
-  background: transparent; /* прозрачный трек */
-  margin: 0.25rem 0;
+.counter-animate {
+  animation: counterPop 0.3s ease-in-out;
 }
 
-.scroll-hide::-webkit-scrollbar-thumb {
-  background: rgba(254, 141, 0, 0.3); /* белый полупрозрачный ползунок */
-  border-radius: 0.625rem;
-  transition: background 0.2s;
+/* Градиентная анимация для кнопок */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.animate-gradient-shift {
+  animation: gradient-shift 3s ease infinite;
 }
 
-/* При наведении на сам скроллбар — делаем его ярче */
-.scroll-hide::-webkit-scrollbar-thumb:hover {
-  background: rgba(254, 141, 0, 0.6);
+/* ==========================================================================
+   Сброс фокуса / обводок для shadcn/radix (ядерное оружие)
+   ========================================================================== */
+[data-slot="select-trigger"]:focus,
+[data-slot="select-trigger"]:focus-visible,
+[data-slot="select-trigger"][data-state="open"],
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+  border-color: #1d1d1d !important;
+}
+[role="listbox"]:focus,
+[role="option"]:focus,
+[data-radix-popper-content-wrapper]:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* Если хочешь, чтобы скроллбар появлялся только при наведении на область */
-.scroll-hide {
-  scrollbar-width: thin; /* Firefox всё равно показывает тонкий, но можно скрыть принудительно? */
-}
-/* Для WebKit: скрываем по умолчанию, показываем при наведении */
-.scroll-hide:not(:hover)::-webkit-scrollbar-thumb {
-  background: transparent;
-}
-.scroll-hide:not(:hover)::-webkit-scrollbar-track {
-  background: transparent;
-}
-/* Или полностью скрываем скроллбар до наведения (но сохраняем возможность скролла) */
-.scroll-hide:not(:hover)::-webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
-
-/********************************************
-flying-plus
-*******************************************/
-.flying-plus {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #ffd966;
-  text-shadow:
-    0 0 0.375rem #b45309,
-    0 0 0.125rem #000;
-  white-space: nowrap;
-  will-change: transform, opacity;
-}
-
+/* ==========================================================================
+   Переменные CSS и тема (всё оставлено без изменений)
+   ========================================================================== */
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: "Geist Variable", sans-serif;
@@ -329,60 +360,7 @@ flying-plus
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Ядерное оружие против фокуса в shadcn/radix */
-[data-slot="select-trigger"]:focus,
-[data-slot="select-trigger"]:focus-visible,
-[data-slot="select-trigger"][data-state="open"],
-select:focus,
-select:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  ring: none !important;
-  border-color: #1d1d1d !important;
-}
-
-/* Для контента выпадалки */
-[role="listbox"]:focus,
-[role="option"]:focus,
-[data-radix-popper-content-wrapper]:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/********************************************
-Градиентная анимация для кнопки 
-*******************************************/
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-.animate-gradient-shift {
-  animation: gradient-shift 3s ease infinite;
-}
-
-/* Появление результата */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in {
-  animation: fade-in 0.4s ease-out forwards;
-}
-
-/* Свечение для золотых элементов (опционально) */
+/* Дополнительный класс – свечение для золотых элементов */
 .glow-gold {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }

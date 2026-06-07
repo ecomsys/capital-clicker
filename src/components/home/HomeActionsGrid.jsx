@@ -64,7 +64,7 @@ export default function HomeActionsGrid() {
 
           <ActionCard
             onClick={handleFullscreenClick}
-            to="/prize-selection"
+            to="/super-game"
             icon="crown"
             label="Супер игра"
             className="max-w-[6.875rem] aspect-[110/88]"
@@ -95,7 +95,7 @@ export default function HomeActionsGrid() {
           className="max-w-[9rem] aspect-[144/115] cursor-pointer"
         />
         <ActionCard
-          to="/prize-selection"
+          to="/super-game"
           icon="crown"
           onClick={handleFullscreenClick}
           label="Супер игра"
