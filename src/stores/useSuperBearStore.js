@@ -7,7 +7,7 @@ export const SUPER_GAME_MODES = {
   BATTERY: "battery",
 };
 
-const START_ENERGY = 1000;
+const START_ENERGY = 10000;
 const DEFAULT_SPIN_SPEED = 0.3;
 const REQUIRED_PRIZE_CLICKS = 100;
 
