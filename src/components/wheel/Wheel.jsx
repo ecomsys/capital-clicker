@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 import useModalStore from "@/stores/useModalStore";
 import useChestStore from "@/stores/useChestStore";
-import usePrizeBagStore from "@/stores/usePrizeBagStore";
+import useWheelPrizesBagStore from "@/stores/useWheelPrizesBagStore";
 import Confetti from "react-confetti";
 import { useWheelSound } from "@/hooks/useWheelSound";
 
@@ -143,7 +143,7 @@ export default function Wheel({
   const { openModal, closeModal } = useModalStore();
   const { playSoundWithFade, stopCurrentSound, resumeAudioContext } =
     useWheelSound();
-  const { initializePrizes, getRandomPrize } = usePrizeBagStore();
+  const { initializePrizes, getRandomPrize } = useWheelPrizesBagStore();
   const { width, height } = useWindowSize();
 
   // --- Локальный стейт ---

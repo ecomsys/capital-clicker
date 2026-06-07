@@ -1,23 +1,50 @@
-// src/components/basic/Modal.jsx
-
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useModalStore from "@/stores/useModalStore";
 import { cn } from "@/lib/utils";
 
 export default function Modal({ className, closeOnBackdropClick = true }) {
-  const { isOpen, content, onClose, closeModal } = useModalStore();
+  const { isOpen, content, onClose, closeModal, blockUntil } = useModalStore();  
+  const [isBlocked, setIsBlocked] = useState(false);
+  const timerRef = useRef(null);
+
+  // Эффект для обновления isBlocked и remaining
+  useEffect(() => {
+    if (!isOpen || !blockUntil) {
+      queueMicrotask(() => {
+        setIsBlocked(false);
+      });
+      return;
+    }
+
+    const update = () => {
+      const now = Date.now();
+      const blocked = now < blockUntil;      
+      setIsBlocked(blocked);
+      
+      if (!blocked && timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+
+    update();
+    timerRef.current = setInterval(update, 200);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isOpen, blockUntil]);
 
   const handleClose = () => {
+    if (isBlocked) return;
     if (onClose) onClose();
     closeModal();
   };
 
   const handleBackdropClick = () => {
-    if (closeOnBackdropClick) handleClose();
+    if (closeOnBackdropClick && !isBlocked) handleClose();
   };
 
-  // Блокируем скролл body при открытой модалке
+  // Блокировка скролла
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -33,27 +60,24 @@ export default function Modal({ className, closeOnBackdropClick = true }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-1000 bg-black/70 "
+            className="fixed inset-0 z-1000 bg-black/70"
             onClick={handleBackdropClick}
           />
-
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-x-0 bottom-0 z-1000 flex items-end justify-center pointer-events-none sm:inset-0 sm:items-center "
+            className="fixed inset-x-0 bottom-0 z-1000 flex items-end justify-center pointer-events-none sm:inset-0 sm:items-center"
           >
             <div
               className={cn(
-                "relative pointer-events-auto w-full ",
+                "relative pointer-events-auto w-full",
                 "bg-[#121212]",
                 "rounded-t-[1.5rem] sm:rounded-[1.5rem]",
                 "border-t border-[#fe8d00] sm:border-t-0 sm:border",
@@ -62,10 +86,14 @@ export default function Modal({ className, closeOnBackdropClick = true }) {
                 className,
               )}
             >
-              {/* CloseBtn */}
               <button
                 onClick={handleClose}
-                className="absolute right-4 top-4 sm:right-6 sm:top-6 text-white/30 hover:text-white transition-colors z-10"
+                disabled={isBlocked}
+                className={`absolute right-4 top-4 sm:right-6 sm:top-6 text-white/30 transition-colors z-10 ${
+                  isBlocked
+                    ? "opacity-40 cursor-not-allowed"
+                    : "hover:text-white"
+                }`}
               >
                 <svg
                   className="w-5 h-5 sm:w-6 sm:h-6"
@@ -81,10 +109,8 @@ export default function Modal({ className, closeOnBackdropClick = true }) {
                   />
                 </svg>
               </button>
-
-              {/* Content */}
               <div className="min-h-[inherit] max-h-[80vh] sm:max-h-[97vh] overflow-y-auto scroll-hide">
-                {content}
+                {content}              
               </div>
             </div>
           </motion.div>

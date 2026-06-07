@@ -1,3 +1,4 @@
+// src/pages/PrizeSelectionPage.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,11 +10,14 @@ import {
   PrizeCardFullWidth,
 } from "@/components/prize/PrizesUi";
 
-import usePrizeStore from "@/stores/usePrizeStore";
+import useSuperPrizeStore from "@/stores/useSuperPrizeStore";
+import useSuperBearStore from "@/stores/useSuperBearStore"; // для сброса прогресса
 
 export default function PrizeSelectionPage() {
   const navigate = useNavigate();
-  const { setSelectedPrize } = usePrizeStore();
+  const { setSelectedPrize, hasSelectedPrize } = useSuperPrizeStore();
+  const { resetPrizeProgress } = useSuperBearStore(); // сброс прогресса при смене приза
+
   const [prizes, setPrizes] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,8 +36,20 @@ export default function PrizeSelectionPage() {
 
   const handleSelectPrize = (prize) => {
     if (prize.locked) return;
+    // Сброс прогресса по старому призу (если был)
+    resetPrizeProgress();
     setSelectedPrize(prize);
-    navigate("/super-game", { state: { prize } });
+    navigate("/super-game");
+  };
+
+  const handleBack = () => {
+    if (hasSelectedPrize()) {
+      // Если приз выбран, возвращаемся в супер-игру
+      navigate("/super-game");
+    } else {
+      // Иначе на главную
+      navigate("/home");
+    }
   };
 
   if (loading || !prizes) {
@@ -50,8 +66,7 @@ export default function PrizeSelectionPage() {
 
   return (
     <div className="h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5">
-      {/* Баннер — фиксированная шапка */}
-      <div className="flex-shrink-0 px-4"> {/* Добавлен px-4 для отступов */}
+      <div className="flex-shrink-0 px-4">
         <AdBanner
           href="https://example.com"
           className="bg-white/5 hover:bg-white/10 transition-all rounded-[0.5rem] h-[3.125rem] sm:h-[4.375rem] mb-2 sm:mb-4 lg:mb-5"
@@ -64,17 +79,15 @@ export default function PrizeSelectionPage() {
         </AdBanner>
       </div>
 
-      {/* Заголовок с кнопкой назад */}
       <div className="flex-shrink-0 px-4">
         <BackTitle
           title="Призы"
-          onBack={() => navigate("/home")}
+          onBack={handleBack} // динамический переход
           className="mt-6 mb-4"
           titleClassName="text-[1.25rem] sm:text-[1.5rem] lg:text-[2rem] mb-2"
         />
       </div>
 
-      {/* Прокручиваемая область с призами */}
       <div className="flex-1 overflow-y-auto pb-35 sm:pb-40 lg:pb-50 scrollbar-none">
         <div className="w-full max-w-[46.625rem] mx-auto px-4">
           {/* Секция: Деньги */}

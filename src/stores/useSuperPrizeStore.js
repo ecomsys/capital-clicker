@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const usePrizeStore = create(
+const useSuperPrizeStore = create(
   persist(
     (set, get) => ({
       selectedPrize: null,
@@ -17,4 +17,4 @@ const usePrizeStore = create(
   )
 );
 
-export default usePrizeStore;
+export default useSuperPrizeStore;
