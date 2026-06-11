@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import {isMobile} from "react-device-detect";
 
 export const GlassButton = forwardRef(
   (
@@ -17,7 +18,9 @@ export const GlassButton = forwardRef(
     ref,
   ) => {
     const baseStyles = cn(
-      "rounded-[1.125rem] px-3 h-[3.25rem] sm:h-[3.75rem]",
+      "rounded-[1.125rem] px-3",
+      !isMobile && "h-[3.25rem] sm:h-[3.75rem]",
+      isMobile && "h-[2.5rem]",
       "inline-flex items-center justify-center gap-3 bg-white/5",
       "text-white font-medium",
       "transition-all duration-200",

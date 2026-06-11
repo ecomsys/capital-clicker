@@ -11,8 +11,10 @@ import { withTooltip } from "@/components/ui/tooltip";
 
 // импортируем переменные рекламы и приманки пока из файла
 import { lastWinner } from "@/constants/honeyPot.site.js";
+import {cn} from "@/lib/utils.js";
+import {isMobile} from "react-device-detect";
 
-export default function Header({ userBalance = 0 }) {
+export default function Header({ userBalance = 0, className = "" }) {
   const displayBalance = userBalance ?? 0;
 
   const handleReset = () => {
@@ -23,10 +25,14 @@ export default function Header({ userBalance = 0 }) {
     }
   };
 
+    const baseStyles = cn(
+        "space-y-2 sm:space-y-4 lg:space-y-5",
+        className
+    );
   // Общая структура кнопки с тултипом
 
   return (
-    <div className="space-y-2 sm:space-y-4 lg:space-y-5">
+    <div className={baseStyles}>
       {/* Мобилка/планшет */}
       <div className="grid grid-cols-4 gap-2 sm:gap-4 lg:gap-5 lg:hidden">
         {withTooltip(

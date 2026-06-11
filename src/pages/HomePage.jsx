@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/basic/Header";
 import ClickCounter from "@/components/home/ClickCounter";
 import EnergyDisplay from "@/components/home/EnergyDisplay";
-import InstallAppButton from "@/components/home/InstallAppButton";
-import ClickBear from "@/components/home/ClickBear";
+import InstallAppButton from "@/components/home/InstallAppButton/InstallAppButton";
+import ClickBear from "@/components/home/ClickBear/ClickBear";
 import HomeActionsGrid from "@/components/home/HomeActionsGrid";
 import { AdBanner } from "@/components/basic/adBanner";
 
@@ -26,6 +26,8 @@ import useBalanceStore from "@/stores/useBalanceStore";
 import useHomeBearStore from "@/stores/useHomeBearStore"; // ← новый стор
 
 import { adBanner } from "@/constants/honeyPot.site.js";
+import { isMobile } from 'react-device-detect';
+import {clsx} from "clsx";
 
 function generateProgressivePrizes(length, start = 1, step = 1) {
   return Array.from({ length }, (_, i) => start + i * step);
@@ -108,28 +110,34 @@ export default function HomePage() {
   const bearPercent = Math.min(progress, 100);
 
   return (
-    <div className="min-h-screen min-h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-1 sm:pb-29 lg:pb-38">
-      <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
-      <Header userBalance={balance} />
+    <div className={clsx(
+        !isMobile && ["min-h-screen", "min-h-[100dvh]", "flex", "flex-col", "pt-2", "sm:pt-4", "lg:pt-7.5", "pb-1", "sm:pb-29", "lg:pb-38"],
+        isMobile && ["mobile-screen", "flex", "flex-col", "justify-between", "pb-19"])
+    }>
+      <AdBanner {...adBanner} className={clsx(!isMobile && ["mb-2", "sm:mb-4", "lg:mb-5"], isMobile && ["h-80/1000", "mb-1"], "advert")} />
+      <Header userBalance={balance} className={clsx(isMobile && ["home-header", "mb-2"])}/>
 
-      <div className="grid grid-cols-3 items-center mt-6 sm:mt-8">
-        <div className="justify-self-start">
+      <div className={clsx(!isMobile && ["grid", "grid-cols-3", "items-center", "mt-6", "sm:mt-8"],
+          isMobile && ["flex", "h-75/1000", "mb-2"])
+      }>
+        <div className={clsx(!isMobile && ["justify-self-start"])}>
           <InstallAppButton onInstall={handleInstall} />
         </div>
-        <div ref={counterRef} className="justify-self-center">
+        <div ref={counterRef} className={clsx(!isMobile && ["justify-self-center"])}>
           <ClickCounter clicks={clicks} />
         </div>
-        <div className="justify-self-end invisible">
-          <div className="w-20 h-8" />
+        <div className={clsx(!isMobile && ["justify-self-end", "invisible"])}>
+          <div className={clsx(!isMobile && ["w-20", "h-8"])} />
         </div>
       </div>
 
       <div
-        className={cn(
+        className={clsx(!isMobile && [
           "flex justify-center flex-1 items-center",
           "mt-1 mb-4",
           "sm:mt-6 sm:mb-4",
-          "lg:mt-2 lg:mb-4",
+          "lg:mt-2 lg:mb-4",],
+            isMobile && ["flex", "items-center", "justify-center", "h-325/1000"]
         )}
       >
         <ClickBear
@@ -139,17 +147,10 @@ export default function HomePage() {
           onClaim={handleClaimPrize}
         />
       </div>
-
-      <div className="flex justify-center mb-8 sm:mb-4 lg:mb-3">
-        <EnergyDisplay
-          energy={energy}
-          iconClasses="w-8 h-8 sm:w-8 sm:h-8"
-          textClasses="text-[1.5rem] sm:text-[1.5rem]"
-        />
-      </div>
-
-      <div className="-translate-y-1/2 sm:translate-y-0 min-w-[18rem] mt-auto pb-4 flex justify-center">
-        <HomeActionsGrid />
+      <div className={clsx(isMobile && ["-mt-2", "h-295/1000", "flex", "items-end", "justify-center"])}>
+          <div className={clsx(!isMobile && ["-translate-y-1/2", "sm:translate-y-0", "min-w-[18rem]", "mt-auto", "pb-4",])}>
+              <HomeActionsGrid energy={energy} />
+          </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import OrientationGuard from "@/components/OrientationGuard";
 import BottomNavbar from "@/components/basic/BottomNavbar";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import {isMobile} from "react-device-detect";
 
 // Лейаут компонент
 export default function Layout() {
@@ -33,8 +34,9 @@ export default function Layout() {
 
           {showNavbar && (
             <div
-              className={`z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 pb-[2.5rem] sm:pb-[3.125rem]
+              className={`z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 
               ${isFixed ? "fixed max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)]" : "absolute "} 
+              ${isMobile ? "pb-4" : 'pb-[2.5rem] sm:pb-[3.125rem]'}
             `}
             >
               <BottomNavbar />

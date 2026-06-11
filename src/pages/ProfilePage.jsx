@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AdBanner } from "@/components/basic/adBanner";
 import { CountrySelect } from "@/components/profile/CountrySelect";
 import { StatisticCard } from "@/components/profile/StatisticCard";
-import { BackTitle } from "@/components/basic/backTitle";
+import { BackTitle } from "@/components/basic/BackTitle";
 import { Button } from "@/components/ui/Button";
 import { Switch } from "@/components/ui/Switch";
 import useSettingsStore from "@/stores/useSettingsStore";

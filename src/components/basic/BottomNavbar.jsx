@@ -1,8 +1,8 @@
 // src/components/basic/BottomNavbar.jsx
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useFullscreen } from "@/hooks/useFullscreen"; 
-import { isMobile } from "@/lib/platform";
+import { useFullscreen } from "@/hooks/useFullScreen";
+import { isMobile } from 'react-device-detect';
 
 
 export default function BottomNavbar() {
@@ -22,12 +22,13 @@ export default function BottomNavbar() {
     "mx-auto flex items-center justify-between min-w-[18rem]",
     "bg-navbar border border-gray-50/20",
     "w-full rounded-[1.5rem]",
-    "h-[4.3125rem] lg:h-[6.625rem]",
+    !isMobile  && "h-[4.3125rem] lg:h-[6.625rem]",
+    isMobile  && "h-[3.25125rem]",
     "max-w-[46.625rem]"
   );
 
     const handleLinkClick = () => {
-    // Вызываем полный экран только если мы еще не в нем, 
+    // Вызываем полный экран только если мы еще не в нем,
     // чтобы избежать лишних вызовов API
     if (!isFullscreen && isMobile()) {
        openFullscreen();
@@ -39,7 +40,7 @@ export default function BottomNavbar() {
       role="navigation"
       aria-label="Основная навигация"
     >
-     
+
       {navItems.map((item) => {
         const isActive = location.pathname === item.to;
 

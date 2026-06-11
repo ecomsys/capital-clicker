@@ -1,7 +1,7 @@
 // src/pages/SplashScreen.jsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFullscreen } from "@/hooks/useFullscreen";
+import { useFullscreen } from "@/hooks/useFullScreen";
 import { isMobile } from "@/lib/platform";
 
 export default function SplashScreen() {

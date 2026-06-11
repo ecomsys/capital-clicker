@@ -1,0 +1,26 @@
+.mobileButton {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.mobileButtonText  {
+    line-height: 1;
+}
+@media (max-width: 380px) {
+    .mobileButtonTextTop {
+        font-size: 0.4rem;
+    }
+    .mobileButtonTextBottom {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 340px) {
+    .mobileButtonTextTop {
+        font-size: 0.4rem;
+    }
+    .mobileButtonTextBottom {
+        font-size: 0.5rem;
+    }
+}

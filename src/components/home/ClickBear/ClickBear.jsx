@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useRef, useEffect, useMemo } from "react";
+import { isMobile } from 'react-device-detect';
+import {clsx} from "clsx";
 
 export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
   const circleRef = useRef(null);
@@ -32,26 +34,44 @@ export default function ClickBear({ onClick, percent = 0, prize, onClaim }) {
   }, [isFull, onClaim]);
 
   return (
-    <div
-      className="relative cursor-pointer transition-transform active:scale-95 inline-block"
-      onClick={onClick}
-    >
+      <div
+          className={clsx("relative cursor-pointer transition-transform active:scale-95 inline-block",
+              isMobile && ["h-100/100", "min-w-0", "min-h-0", "w-full"],
+          )}
+          onClick={onClick}
+      >
       <div
         className={cn(
           "relative w-full mx-auto overflow-visible",
           "cursor-pointer transition-transform active:scale-95",
-          "min-w-[14rem] max-w-[60vw]",         
-          "iphone:max-w-[72vw]",
-          "sm:max-w-[45vh]",
-          "lg:max-w-[40vh]",
-          "xl:max-w-[38.5vh]",          
-          "2xl:max-w-[34.5vh]"          
+          !isMobile && [
+              "min-w-[14rem] max-w-[60vw]",
+              "iphone:max-w-[72vw]",
+              "sm:max-w-[45vh]",
+              "lg:max-w-[40vh]",
+              "xl:max-w-[38.5vh]",
+              "2xl:max-w-[34.5vh]",
+          ],
+          isMobile && [
+              "h-100/100",
+              "min-w-0",
+              "min-h-0",
+              "w-full",
+              "flex",
+              "justify-center",
+              "items-center"
+          ],
         )}
       >
         <img
           src="/images/webp/level-bears/level-1.webp"
           alt=""
-          className="relative w-full h-full object-cover"
+          className={clsx(
+              "relative h-full object-cover",
+              isMobile && ["w-auto",],
+              !isMobile && ["w-full"],
+          )
+        }
           draggable={false}
           onContextMenu={(e) => e.preventDefault()}
           style={{ WebkitTouchCallout: "none" }}

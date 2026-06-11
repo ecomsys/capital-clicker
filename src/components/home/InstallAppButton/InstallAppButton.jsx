@@ -1,6 +1,9 @@
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 import useModalStore from "@/stores/useModalStore";
 import { isIOS } from "@/lib/platform";
+import classes from "./InstallAppButton.module.css";
+import {clsx} from "clsx";
+import { isMobile } from 'react-device-detect';
 
 export default function InstallAppButton() {
   const { isInstallable, install, isInstalled } = usePWAInstall();
@@ -69,7 +72,7 @@ export default function InstallAppButton() {
   return (
     <button
       onClick={handleClick}
-      className={buttonClasses}
+      className={clsx(buttonClasses, isMobile && [classes.mobileButton, "py-0"])}
       disabled={isInstalled}
     >
       {isInstalled ? (
@@ -77,7 +80,7 @@ export default function InstallAppButton() {
           <svg className="text-white w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true">
             <use href={`/icons/sprite/sprite.svg#info`} />
           </svg>
-          <div className="flex flex-col text-center sm:text-left">
+          <div className={clsx(isMobile && classes.mobileButtonText, "flex flex-col text-center sm:text-left")}>
             <span className="text-[0.6rem] uppercase">приложение</span>
             <span className="text-[0.75rem] font-bold uppercase">
               установлено
@@ -91,9 +94,9 @@ export default function InstallAppButton() {
             src="./images/webp/icons-png/play-market.webp"
             alt="Install"
           />
-          <div className="flex flex-col text-center sm:text-left">
-            <span className="text-[0.6rem] uppercase">установить</span>
-            <span className="text-[0.75rem] font-bold uppercase">
+          <div className={clsx(isMobile && classes.mobileButtonText, "flex flex-col text-center sm:text-left")}>
+            <span className={clsx(isMobile && classes.mobileButtonTextTop, "text-[0.6rem] uppercase")}>установить</span>
+            <span className={clsx(isMobile && classes.mobileButtonTextBottom, "text-[0.75rem] font-bold uppercase")}>
               приложение
             </span>
           </div>
