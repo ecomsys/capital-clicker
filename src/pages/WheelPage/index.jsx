@@ -1,6 +1,5 @@
-// src/pages/WheelPage
+// src/pages/WheelPage.jsx
 
-import { cn } from "@/lib/utils";
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
@@ -16,7 +15,7 @@ import { playSound } from "@/audio/manager";
 // сторы
 import useChestStore from "@/stores/useChestStore";
 
-// запасная константа если осноовной json отвалится
+// запасная константа если основой json отвалится
 import { DEFAULT_PRIZES } from "@/pages/WheelPage/defaultPrizes.data";
 
 // импортируем переменные рекламы и приманки пока из файла
@@ -82,7 +81,7 @@ export default function WheelPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center">
+      <div className="h-screen h-[100dvh] flex items-center justify-center pt-3 sm:pt-4 lg:pt-6 px-3">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#FFD700]/30 border-t-[#FFD700] rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white/70">Загружаем рулетку...</p>
@@ -92,10 +91,10 @@ export default function WheelPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] flex flex-col pb-28 lg:pb-38">
-      <header className="flex-shrink-0 pt-3 sm:pt-4 lg:pt-6 px-3">
+    <div className="h-screen h-[100dvh] eco-container flex flex-col pt-2 sm:pt-4 lg:pt-7.5 overflow-hidden">
+      <header className="flex-shrink-0 ">
         <AdBanner {...adBanner} className="mb-2 sm:mb-3" />
-        <GlassMessage className="font-bold text-center text-sm sm:text-base flex items-center gap-1">
+        <GlassMessage className="font-bold text-center text-sm sm:text-base flex items-center gap-1 flex-shrink-0">
           <span className="text-[#FFD700]">{lastWinner.name}</span>
           <span>только что выиграл</span>
           <span className="text-white">{lastWinner.win} ₽</span>
@@ -108,20 +107,19 @@ export default function WheelPage() {
           className="mt-6 mb-1"
         />
       </header>
-      <section className=" flex-1 w-full flex items-center justify-center">
-        <Wheel
-          className={cn(
-            "w-full relative flex flex-col items-center overflow-visible",
-            "cursor-pointer transition-transform active:scale-95",
-            "min-w-[14rem] max-w-[80vw]",            
-            "iphone:max-w-[90vw]",
-            "sm:min-w-[24rem] sm:max-w-[40vh]",
-            "lg:max-w-[50vh]",
-            "xl:max-w-[52vh]",
-          )}
-          {...wheelProps}
-        />
+
+      {/* Колесо занимает всё доступное место */}
+      <section className="flex-1 min-h-[12rem] w-full flex items-center justify-center px-2 py-1">
+        <div className="min-h-[inherit] w-full h-full max-h-[100vw] aspect-square flex items-center justify-center">
+          <Wheel
+            className="w-full h-full flex flex-col items-center justify-center"
+            {...wheelProps}
+          />
+        </div>
       </section>
-    </main>
+
+      {/* нижний буфер   */}
+      <div className="flex-shrink-0 h-26 sm:h-25 lg:h-35"></div>
+    </div>
   );
 }

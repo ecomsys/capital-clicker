@@ -18,30 +18,27 @@ export default function Layout() {
 
   // сравнение локаций
   const isSplash = location.pathname === "/splash";
+  // const isHome = location.pathname === "/home";
 
   const isFixed = true;
 
   return (
-    <OrientationGuard className={`${isSplash ? "" : "bg-black"}`}>
-      <div className="eco-container">
-        <div className="min-h-screen flex flex-col relative">
-          <main className="flex-1">
-            <TooltipProvider>
-              <Outlet />
-            </TooltipProvider>
-          </main>
+    <OrientationGuard className={`${isSplash ? "" : "bg-black relative"}`}>
+      <main className="flex-1">
+        <TooltipProvider>
+          <Outlet />
+        </TooltipProvider>
+      </main>
 
-          {showNavbar && (
-            <div
-              className={`z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 pb-[2.5rem] sm:pb-[3.125rem]
-              ${isFixed ? "fixed max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)]" : "absolute "} 
+      {showNavbar && (
+        <div
+          className={`z-500 w-full left-1/2 -translate-x-1/2 right-0 bottom-0 pb-[1.6rem] sm:pb-[2.2rem]
+              ${isFixed ? "fixed max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)]" : "relative"} 
             `}
-            >
-              <BottomNavbar />
-            </div>
-          )}
+        >
+          <BottomNavbar />
         </div>
-      </div>
+      )}
     </OrientationGuard>
   );
 }

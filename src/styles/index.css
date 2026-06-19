@@ -11,6 +11,9 @@
 /* ==========================================================================
    Базовые стили
    ========================================================================== */
+html {
+  overflow-x: hidden;
+}
 body {
   @apply font-sans text-white;
 }
@@ -18,7 +21,7 @@ body {
 @layer base {
   html,
   body {
-    touch-action: manipulation;   /* убираем задержку tap (300ms) */
+    touch-action: manipulation; /* убираем задержку tap (300ms) */
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
@@ -45,7 +48,7 @@ body {
   }
 
   img {
-    pointer-events: none;         /* отключаем контекстное меню на картинках */
+    pointer-events: none; /* отключаем контекстное меню на картинках */
   }
 
   img,
@@ -93,6 +96,48 @@ body {
   background: transparent;
 }
 
+/* ================================================================================
+Красивый скролл как в топ-приложениях - БЕЗ СТРЕЛОК (только на .custom-scroll)
+================================================================================== */
+
+.custom-scroll {
+  /* Для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(254, 141, 0, 0.3) rgba(255, 255, 255, 0.05);
+  
+  /* Для Internet Explorer */
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  inline-size: 4px;
+  background-color: transparent;
+}
+
+/* Убираем стрелки */
+.custom-scroll::-webkit-scrollbar-button {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  border: 0 none #fff;
+  background-color: rgba(254, 141, 0, 0.3);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(230, 120, 0, 0.6);
+}
 /* ==========================================================================
    Компоненты (контейнер, анимация +1 и пр.)
    ========================================================================== */
@@ -100,16 +145,18 @@ body {
   .eco-container {
     width: 100%;
     max-inline-size: 123.75rem; /* 1980px */
-    min-inline-size: 20rem;     /* 320px */
+    min-inline-size: 20rem; /* 320px */
     margin-inline: auto;
     padding-inline: 1rem;
   }
-  @media (min-width: 40rem) {    /* 640px */
+  @media (min-width: 40rem) {
+    /* 640px */
     .eco-container {
       padding-inline: 2rem;
     }
   }
-  @media (min-width: 68.75rem) { /* 1100px */
+  @media (min-width: 68.75rem) {
+    /* 1100px */
     .eco-container {
       padding-inline: 19.1875rem; /* 307px */
     }
@@ -124,7 +171,9 @@ body {
   font-size: 2rem;
   font-weight: bold;
   color: #ffd966;
-  text-shadow: 0 0 0.375rem #b45309, 0 0 0.125rem #000;
+  text-shadow:
+    0 0 0.375rem #b45309,
+    0 0 0.125rem #000;
   white-space: nowrap;
   will-change: transform, opacity;
 }

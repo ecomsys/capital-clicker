@@ -1,32 +1,33 @@
 // src/pages/MiniGamePage.jsx
-
 import { AdBanner } from "@/components/basic/adBanner";
 import { GlassMessage } from "@/components/basic/GlassMessage";
 import EmptyMiniState from "@/components/mini/EmptyMiniState";
 
 // импортируем переменные рекламы и приманки пока из файла
 import { adBanner, lastWinner } from "@/constants/honeyPot.site.js";
-export default function MiniGamePage() {
 
-  return (    
-    <div className="min-h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-20 sm:pb-40 lg:pb-50">
+export default function MiniGamePage() {
+  return (
+    <div className="h-screen h-[100dvh] eco-container flex flex-col overflow-hidden pt-3 sm:pt-4 lg:pt-6">
       <AdBanner
         href={adBanner.href}
         title={adBanner.title}
         imageSrc={adBanner.imageSrc}
-        className="mb-2 sm:mb-4 lg:mb-5 "
+        className="flex-shrink-0 mb-2 sm:mb-4 lg:mb-5"
       />
 
-      <GlassMessage className="font-bold text-center">
+      <GlassMessage className="flex-shrink-0 font-bold text-center">
         <span>
           <span className="text-golden">{lastWinner.name}</span> выиграл{" "}
           {lastWinner.win} <span>рублей</span>
         </span>
       </GlassMessage>
 
-      <div className="mt-3 sm:mt-8 flex-1 flex items-center justify-center">
-        <EmptyMiniState />
-      </div>
+      {/* Картинка занимает всё доступное место и резиновая */}
+      <EmptyMiniState className="flex-1 my-4" />
+
+      {/* нижний буфер   */}
+      <div className="flex-shrink-0 h-22 sm:h-25 lg:h-35"></div>
     </div>
   );
 }

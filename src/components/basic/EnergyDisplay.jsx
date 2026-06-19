@@ -7,7 +7,7 @@ export default function EnergyDisplay({ energy, className,iconClasses, textClass
     <div
       className={cn(
         "inline-flex items-center gap-1 sm:gap-2",        
-        "px-4",
+        "px-4 leading-[1.1]",
         "text-white",
         className
       )}

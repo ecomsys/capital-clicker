@@ -1,11 +1,10 @@
 // src/pages/HomePage.jsx
 import { useRef, useCallback } from "react";
-import { cn } from "@/lib/utils";
 
 // компоненты
 import Header from "@/components/basic/Header";
 import ClickCounter from "@/components/home/ClickCounter";
-import EnergyDisplay from "@/components/home/EnergyDisplay";
+import EnergyDisplay from "@/components/basic/EnergyDisplay";
 import InstallAppButton from "@/components/home/InstallAppButton";
 import ClickBear from "@/components/home/ClickBear";
 import HomeActionsGrid from "@/components/home/HomeActionsGrid";
@@ -23,7 +22,7 @@ import { useDustEffect } from "@/hooks/useDustEffect";
 // сторы
 import useChestStore from "@/stores/useChestStore";
 import useBalanceStore from "@/stores/useBalanceStore";
-import useHomeBearStore from "@/stores/useHomeBearStore"; // ← новый стор
+import useHomeBearStore from "@/stores/useHomeBearStore";
 
 import { adBanner } from "@/constants/honeyPot.site.js";
 
@@ -38,7 +37,6 @@ export default function HomePage() {
   const { incrementProgress: incrementChestProgress } = useChestStore();
   const { balance, addBalance } = useBalanceStore();
 
-  // Используем home bear store
   const {
     progress,
     prizeIndex,
@@ -80,7 +78,7 @@ export default function HomePage() {
       if (energy <= 0) return;
       event.stopPropagation();
 
-      incrementChestProgress("main", 10);
+      incrementChestProgress("main", 100);
       playSound("/sounds/click.mp3", { volume: 0.35 }).catch(console.warn);
 
       flyCoin(event);
@@ -108,11 +106,14 @@ export default function HomePage() {
   const bearPercent = Math.min(progress, 100);
 
   return (
-    <div className="min-h-screen min-h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-1 sm:pb-29 lg:pb-38">
-      <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
-      <Header userBalance={balance} />
+    <div className="h-screen h-[100dvh] eco-container flex flex-col pt-2 sm:pt-4 lg:pt-7.5 overflow-hidden">
+      <AdBanner
+        {...adBanner}
+        className="flex-shrink-0 mb-2 sm:mb-4 lg:mb-5"
+      />
+      <Header userBalance={balance} className="flex-shrink-0" />
 
-      <div className="grid grid-cols-3 items-center mt-6 sm:mt-8">
+      <div className="flex-shrink-0 grid grid-cols-3 items-center mt-4 sm:mt-8 -mb-2">
         <div className="justify-self-start">
           <InstallAppButton onInstall={handleInstall} />
         </div>
@@ -124,23 +125,20 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div
-        className={cn(
-          "flex justify-center flex-1 items-center",
-          "mt-1 mb-4",
-          "sm:mt-6 sm:mb-4",
-          "lg:mt-2 lg:mb-4",
-        )}
-      >
-        <ClickBear
-          onClick={handleClickBear}
-          percent={bearPercent}
-          prize={`${currentPrize}₽`}
-          onClaim={handleClaimPrize}
-        />
+      {/* Медведь занимает всё оставшееся место, но сжимается */}
+      <div className="flex-1 min-h-[4rem] flex items-center justify-center px-4 pb-1 sm:pb-0">
+        <div className="w-full h-full max-h-[50vh] lg:max-h-[25rem] aspect-square flex items-center justify-center">
+          <ClickBear
+            onClick={handleClickBear}
+            percent={bearPercent}
+            prize={`${currentPrize}₽`}
+            onClaim={handleClaimPrize}
+            className="w-full h-full"
+          />
+        </div>
       </div>
 
-      <div className="flex justify-center mb-8 sm:mb-4 lg:mb-3">
+      <div className="flex-shrink-0 flex justify-center mb-6 sm:mb-4 lg:mb-3">
         <EnergyDisplay
           energy={energy}
           iconClasses="w-8 h-8 sm:w-8 sm:h-8"
@@ -148,9 +146,12 @@ export default function HomePage() {
         />
       </div>
 
-      <div className="-translate-y-1/2 sm:translate-y-0 min-w-[18rem] mt-auto pb-4 flex justify-center">
+      <div className="flex-shrink-0 min-w-[18rem] pb-4 flex justify-center -mt-[6rem] sm:mt-0">
         <HomeActionsGrid />
       </div>
+
+      {/* нижний буфер   */}
+      <div className="flex-shrink-0 h-21 sm:h-25 lg:h-35"></div>
     </div>
   );
 }

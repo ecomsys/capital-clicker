@@ -15,16 +15,16 @@ export default function EarnPage() {
   };
 
   return (
-    <div className="flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-38">
+    <div className="min-h-screen min-h-[100dvh] eco-container flex flex-col overflow-hidden pt-2 sm:pt-4 lg:pt-7.5">
       {/* Теперь adBanner определён */}
       <AdBanner
         href={adBanner.href}
         title={adBanner.title}
         imageSrc={adBanner.imageSrc}
-        className="mb-2 sm:mb-4 lg:mb-5"
+        className="flex-shrink-0 mb-2 sm:mb-4 lg:mb-5"
       />
      
-      <GlassMessage className="font-bold text-center">
+      <GlassMessage className="flex-shrink-0 font-bold text-center">
         <span>
           <span className="text-golden">{lastWinner.name}</span> выиграл{" "}
           {lastWinner.win} <span>рублей</span>
@@ -32,7 +32,7 @@ export default function EarnPage() {
       </GlassMessage>
 
       {/* остальной код без изменений */}
-      <div className="pt-10 flex flex-col w-full items-center justify-center text-center">
+      <div className="flex-shrink-0 pt-10 flex flex-col w-full items-center justify-center text-center">
         <h3 className="text-2xl sm:text-[2rem] font-bold text-white max-w-[18rem] max-auto">
           <span className="text-accent">Заработайте больше бонусов</span>
         </h3>
@@ -46,7 +46,7 @@ export default function EarnPage() {
       <PromoCode
         onApply={handleApplyPromo}
         placeholder="Введите промокод"
-        className="max-w-[46.625rem] mx-auto mb-4"
+        className="flex-shrink-0 max-w-[46.625rem] mx-auto mb-4"
       />
 
       <div className="w-full max-w-232.5 mx-auto grid grid-cols-2 iphone:flex flex-wrap gap-3 sm:gap-4 justify-center">
@@ -54,6 +54,9 @@ export default function EarnPage() {
           <EarnCard key={card.id} data={card} onClick={card.onClick} />
         ))}
       </div>
+
+      {/* нижний буфер   */}
+       <div className="flex-shrink-0 h-35 lg:h-45"></div>
     </div>
   );
 }

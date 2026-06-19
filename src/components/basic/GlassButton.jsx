@@ -17,7 +17,8 @@ export const GlassButton = forwardRef(
     ref,
   ) => {
     const baseStyles = cn(
-      "rounded-[1.125rem] px-3 h-[3.25rem] sm:h-[3.75rem]",
+      "px-3 h-[2.65rem] sm:h-[3.75rem]",
+      "rounded-[1.125rem]",
       "inline-flex items-center justify-center gap-3 bg-white/5",
       "text-white font-medium",
       "transition-all duration-200",

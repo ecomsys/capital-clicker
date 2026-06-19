@@ -1,14 +1,16 @@
-// src/components/Clans/EmptyClansState.jsx
-
+// src/components/clans/EmptyMiniState.jsx
 import { cn } from "@/lib/utils";
 
 export default function EmptyClansState({ className }) {
   return (
     <div
-      className={cn("flex flex-col w-full items-center justify-center text-center", className)}
+      className={cn(
+        "flex flex-col w-full items-center justify-center text-center",
+        className
+      )}
     >
-      {/* Картинка с aspect-ratio 516/260 */}
-      <div className="mt-8 mb-8 sm:my-16 w-full max-w-[42rem] aspect-[516/260] mx-auto">
+      {/* Картинка - резиновая, занимает всё доступное место */}
+      <div className="w-full h-full max-h-[28vh] min-h-[12rem] aspect-[516/260] flex items-center justify-center">
         <img
           src="/images/webp/sand-clock.webp"
           alt="Нет кланов"
@@ -17,15 +19,14 @@ export default function EmptyClansState({ className }) {
       </div>
 
       {/* Заголовок */}
-      <h3 className="text-2xl sm:text-[2rem] font-bold text-white">
-       <span className="text-accent">Скоро</span> будет доступно
+      <h3 className="flex-shrink-0 text-2xl sm:text-[2rem] font-bold text-white mt-4">
+        <span className="text-accent">Скоро</span> будет доступно
       </h3>
 
       {/* Описание */}
-      <p className="mt-3 mb-20 text-sm sm:text-base text-[#666] max-w-[16.25rem] sm:max-w-[18.1875rem]">
+      <p className="flex-shrink-0 mt-3 text-sm sm:text-base text-[#666] max-w-[16.25rem] sm:max-w-[18.1875rem]">
         Эта функция находится в разработке и скоро станет доступна
       </p>
-    
     </div>
   );
 }

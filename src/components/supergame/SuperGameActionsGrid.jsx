@@ -61,17 +61,17 @@ export default function SuperGameActionsGrid() {
           <TreasureChest
             onClick={handleChestClick}
             progress={chestPercent}
-            className="max-w-[6.875rem] aspect-[110/69]"
+            className="max-w-[6.875rem] aspect-[110/50]"
           />
-          <div className="max-w-[6.875rem] aspect-[110/69]"></div>
-          <div className="max-w-[6.875rem] aspect-[110/69]"></div>
+          <div className="max-w-[6.875rem] aspect-[110/50]"></div>
+          <div className="max-w-[6.875rem] aspect-[110/50]"></div>
 
           <ActionCard
             onClick={handleFullscreenClick}
             to="/shop"
             icon="shop"
             label="Магазин"
-            className="max-w-[6.875rem] aspect-[110/88]"
+            className="max-w-[6.875rem] aspect-[125/88]"
           />
           <ActionCard
             onClick={() => {
@@ -80,7 +80,7 @@ export default function SuperGameActionsGrid() {
             }}
             icon="info"
             label="Правила"
-            className="border-white text-white max-w-[6.875rem] aspect-[110/88]"
+            className="border-white text-white max-w-[6.875rem] aspect-[125/88]"
           />
           <ActionCard
             onClick={() => {
@@ -89,7 +89,7 @@ export default function SuperGameActionsGrid() {
             }}
             icon="trophy"
             label="Мои призы"
-            className="max-w-[6.875rem] aspect-[110/88]"
+            className="max-w-[6.875rem] aspect-[125/88]"
           />
         </div>
       </div>
