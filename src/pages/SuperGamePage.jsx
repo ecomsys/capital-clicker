@@ -2,11 +2,11 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Confetti from "react-confetti";
-import { useWindowSize } from "react-use";
+import { cn } from "@/lib/utils";
 
 import Header from "@/components/basic/Header";
 import ClickCounter from "@/components/home/ClickCounter";
-import EnergyDisplay from "@/components/home/EnergyDisplay";
+import EnergyDisplay from "@/components/basic/EnergyDisplay";
 import SuperClickBear from "@/components/supergame/SuperClickBear";
 import { AdBanner } from "@/components/basic/adBanner";
 import GameModeToggle from "@/components/supergame/GameModeToggle";
@@ -21,6 +21,7 @@ import { useFlyPrize } from "@/hooks/useFlyPrize";
 import { useToast } from "@/hooks/useToast";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useSpinSpeed } from "@/hooks/useSpinSpeed";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import useModalStore from "@/stores/useModalStore";
 import useChestStore from "@/stores/useChestStore";
 import useSuperBearStore, {
@@ -65,7 +66,7 @@ export default function SuperGamePage() {
   const counterRef = useRef(null);
 
   const { toastMessage, toastVisible, toastLeaving, showToast } = useToast();
-  
+
   const { countUpValue, isCountUpActive, startCountUp } = useCountUp();
   const { setSpinSpeed: setLocalSpinSpeed, applySpinDecay } = useSpinSpeed(
     0.1,
@@ -81,10 +82,8 @@ export default function SuperGamePage() {
   const handlePrizeAchieved = useCallback(async () => {
     if (!selectedPrize) return;
 
-    // Получаем значение приза (если есть)
     const prizeValue = selectedPrize.value ?? 0;
 
-    // Если приз имеет денежную ценность (>0) – показываем анимацию полёта и начисляем баланс
     if (prizeValue > 0) {
       const balanceElement = document.querySelector(".user-balance");
       if (balanceElement) {
@@ -95,10 +94,7 @@ export default function SuperGamePage() {
       addBalance(prizeValue);
       console.log(`Супер-приз получен: ${prizeValue} руб.`);
     } else {
-      // Для нематериальных призов (подарки, сертификаты) – только уведомление
-      console.log(
-        `Получен приз: ${selectedPrize.title || selectedPrize.id}`,
-      );
+      console.log(`Получен приз: ${selectedPrize.title || selectedPrize.id}`);
     }
 
     setShowConfetti(false);
@@ -230,7 +226,7 @@ export default function SuperGamePage() {
 
   if (!hasSelectedPrize()) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="h-screen h-[100dvh] flex items-center justify-center bg-black">
         <div className="text-center">
           <div className="w-12 h-12 border-3 border-golden-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white">Перенаправление на выбор приза...</p>
@@ -240,10 +236,13 @@ export default function SuperGamePage() {
   }
 
   return (
-    <div className="relative min-h-screen min-h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 pb-4 sm:pb-29 lg:pb-38">
+    <div className="eco-container h-screen h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5 overflow-hidden">
       {toastVisible && (
         <div
-          className={`fixed top-4 right-4 z-50 bg-golden text-white px-4 py-3 rounded-md shadow-lg ${toastLeaving ? "animate-slide-out-right" : "animate-slide-in-right"}`}
+          className={cn(
+            "fixed top-4 right-4 z-50 bg-golden text-white px-4 py-3 rounded-md shadow-lg",
+            toastLeaving ? "animate-slide-out-right" : "animate-slide-in-right",
+          )}
         >
           {toastMessage}
         </div>
@@ -262,46 +261,69 @@ export default function SuperGamePage() {
         </div>
       )}
 
-      <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
-      <Header userBalance={balance} />
-      <SuperPrizeBanner
-        prize={selectedPrize}
-        progress={prizeProgress}
-        className="max-w-[46.625rem] mx-auto mt-2 sm:mt-4"
-      />
-      <GameModeToggle className="w-full max-w-[46.625rem] mx-auto mt-1.5 sm:mt-3" />
+      {/* Верхняя секция - фиксированная */}
+      <div className="flex-shrink-0">
+        <AdBanner {...adBanner} className="mb-2 sm:mb-4 lg:mb-5" />
+        <Header userBalance={balance} />
+        <SuperPrizeBanner
+          prize={selectedPrize}
+          progress={prizeProgress}
+          className="max-w-[46.625rem] mx-auto mt-2 sm:mt-4"
+        />
+        <GameModeToggle className="w-full max-w-[46.625rem] mx-auto mt-1.5 sm:mt-3" />
 
-      <div className="h-10 sm:h-[3.25rem] flex sm:grid sm:grid-cols-3 items-center mt-3 w-full max-w-[46.625rem] mx-auto">
-        <div className="hidden sm:block" />
-        <div
-          className={`${animatingCounter ? "counter-animate" : ""} ${superGameMode === SUPER_GAME_MODES.BATTERY ? "mr-auto sm:mr-0" : "mx-auto sm:mx-0"} sm:justify-self-center`}
-          ref={counterRef}
-        >
-          <ClickCounter clicks={displayValue} />
+        {/* Строка счётчика и кнопки */}
+        <div className="h-10 sm:h-[3.25rem] flex sm:grid sm:grid-cols-3 items-center mt-2 w-full max-w-[46.625rem] mx-auto">
+          <div className="hidden sm:block" />
+          <div
+            className={cn(
+              animatingCounter && "counter-animate",
+              superGameMode === SUPER_GAME_MODES.BATTERY
+                ? "mr-auto sm:mr-0"
+                : "mx-auto sm:mx-0",
+              "sm:justify-self-center",
+            )}
+            ref={counterRef}
+          >
+            <ClickCounter clicks={displayValue} />
+          </div>
+          <div className="justify-self-end">
+            {superGameMode === SUPER_GAME_MODES.BATTERY && (
+              <Button
+                onClick={handleSendClicks}
+                className="sm:min-w-[8.75rem] rounded-[1rem] px-5 h-10 sm:h-[3.25rem] text-white bg-golden hover:bg-golden/80 active:scale-95"
+              >
+                <span>Отправить</span>
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="justify-self-end">
-          {superGameMode === SUPER_GAME_MODES.BATTERY && (
-            <Button
-              onClick={handleSendClicks}
-              className="sm:min-w-[8.75rem] rounded-[1rem] px-5 h-10 sm:h-[3.25rem] text-white bg-golden hover:bg-golden/80 active:scale-95"
-            >
-              <span>Отправить</span>
-            </Button>
-          )}
+      </div>
+
+      {/* Медведь - занимает всё доступное место, резиновый */}
+      <div className="flex-1 min-h-[4rem] flex items-center justify-center px-4 pt-0 -mt-2">
+        <div className="w-full h-full max-h-[45vh] aspect-square flex items-center justify-center">
+          <SuperClickBear
+            onClick={handleClickBear}
+            spinSpeed={globalSpinSpeed}
+          />
         </div>
       </div>
 
-      <div className="flex justify-center flex-1 items-center mb-6 sm:mb-4 lg:mb-0">
-        <SuperClickBear onClick={handleClickBear} spinSpeed={globalSpinSpeed} />
+      <div className="flex-shrink-0 flex justify-center mb-8 sm:mb-4 lg:mb-3">
+        <EnergyDisplay
+          energy={energy}
+          iconClasses="w-8 h-8 sm:w-8 sm:h-8"
+          textClasses="text-[1.5rem] sm:text-[1.5rem]"
+        />
       </div>
 
-      <div className="flex justify-center mb-8 sm:mb-4">
-        <EnergyDisplay energy={energy} />
-      </div>
-
-      <div className="-translate-y-1/2 sm:translate-y-0 min-w-[18rem] mt-auto pb-4 flex sm:justify-center">
+      <div className="flex-shrink-0 min-w-[18rem] pb-4 flex justify-center -mt-[6rem] sm:mt-0">
         <SuperGameActionsGrid />
       </div>
+
+      {/* нижний буфер   */}
+      <div className="flex-shrink-0 h-21 sm:h-25 lg:h-35"></div>
     </div>
   );
 }

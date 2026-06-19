@@ -10,8 +10,7 @@ import { useWheelSound } from "@/hooks/useWheelSound";
 // ------------------------------------------------------------
 // КОНСТАНТЫ
 // ------------------------------------------------------------
-// Форсированный приз для тестов. Поставь null, чтобы крутить честно.
-const FORCED_PRIZE = null; // например: "100 ₽"
+const FORCED_PRIZE = null;
 
 const VIP_COLORS = [
   "url(#grad1)",
@@ -24,8 +23,52 @@ const VIP_COLORS = [
   "url(#grad8)",
 ];
 
-const SPIN_DURATION = 8000; // длительность анимации (мс)
-const ARROW_ANGLE = 270; // стрелка сверху (смотрит вниз)
+const SPIN_DURATION = 8000;
+const ARROW_ANGLE = 270;
+
+// ------------------------------------------------------------
+// КОМПОНЕНТ СТРЕЛКИ (развёрнута на 180°, острая вниз)
+// ------------------------------------------------------------
+const WheelArrow = () => (
+  <g transform="translate(200, 18)" className="pointer-events-none" style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.6))' }}>
+    {/* Тень под стрелкой */}
+    <polygon
+      points="0,32 -16,-12 16,-12"
+      fill="rgba(0,0,0,0.5)"
+      transform="translate(3, -5)"
+    />
+    
+    {/* Основная стрелка (красная с градиентом) */}
+    <polygon
+      points="0,32 -16,-12 16,-12"
+      fill="url(#arrowGrad)"
+      stroke="#B71C1C"
+      strokeWidth="2.5"
+      strokeLinejoin="round"
+    />
+    
+    {/* Блик на левой половине */}
+    <polygon
+      points="0,32 -16,-12 0,-12"
+      fill="rgba(255,255,255,0.12)"
+    />
+    
+    {/* Светлая окантовка */}
+    <polygon
+      points="0,30 -12,-8 12,-8"
+      fill="none"
+      stroke="rgba(255,255,255,0.15)"
+      strokeWidth="1.5"
+    />
+    
+    {/* Кружок крепления (сверху) */}
+    <circle cx="0" cy="-12" r="7" fill="#B71C1C" stroke="#7f0000" strokeWidth="1.5" />
+    <circle cx="0" cy="-12" r="3.5" fill="#E53935" />
+    
+    {/* Блик на кружке */}
+    <circle cx="-2" cy="-14" r="1.5" fill="rgba(255,255,255,0.3)" />
+  </g>
+);
 
 // ------------------------------------------------------------
 // КОМПОНЕНТ СЕКТОРОВ КОЛЕСА
@@ -39,7 +82,6 @@ const WheelSectors = ({ prizes, angleStep }) => {
     const endAngle = (i + 1) * angleStep;
     const largeArc = angleStep > 180 ? 1 : 0;
 
-    // Координаты дуги сектора
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
     const x1 = 200 + 180 * Math.cos(startRad);
@@ -48,13 +90,11 @@ const WheelSectors = ({ prizes, angleStep }) => {
     const y2 = 200 + 180 * Math.sin(endRad);
     const pathData = `M 200 200 L ${x1} ${y1} A 180 180 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
-    // Позиция текста/иконки в центре сектора
     const midAngle = startAngle + angleStep / 2;
     const midRad = (midAngle * Math.PI) / 180;
     const cx = 200 + 125 * Math.cos(midRad);
     const cy = 200 + 125 * Math.sin(midRad);
 
-    // Обрезаем длинные названия
     let label = prizes[i]?.title || "";
     const maxLen = count <= 6 ? 14 : 10;
     if (label.length > maxLen) {
@@ -160,7 +200,7 @@ export default function Wheel({
   const angleStep = 360 / prizes.length;
 
   // ------------------------------------------------------------
-  // ЗАВЕРШЕНИЕ ВРАЩЕНИЯ — показываем модалку с выигрышем
+  // ЗАВЕРШЕНИЕ ВРАЩЕНИЯ
   // ------------------------------------------------------------
   const finishSpin = useCallback(
     (prizeIndex) => {
@@ -210,24 +250,21 @@ export default function Wheel({
   );
 
   // ------------------------------------------------------------
-  // ВРАЩЕНИЕ — выбираем приз и считаем угол
+  // ВРАЩЕНИЕ
   // ------------------------------------------------------------
   const spin = useCallback(() => {
     if (spinning || disabled) return;
 
-    // Подготовка: закрываем модалки, запускаем звук
     closeModal();
     setShowConfetti(false);
     resumeAudioContext();
     stopCurrentSound();
     playSoundWithFade();
 
-    // --- Определяем целевой приз ---
     let targetIndex;
     let selectedPrize;
 
     if (FORCED_PRIZE) {
-      // Режим отладки: ищем приз по названию
       let forcedIdx = prizes.findIndex((p) => p.title === FORCED_PRIZE);
       if (forcedIdx === -1) {
         const normalized = FORCED_PRIZE.trim().toLowerCase();
@@ -247,18 +284,15 @@ export default function Wheel({
         targetIndex = prizes.findIndex((p) => p.title === selectedPrize?.title);
       }
     } else {
-      // Честный режим: берём приз из "мешка" (zustand + persist)
       selectedPrize = getRandomPrize();
       targetIndex = prizes.findIndex((p) => p.title === selectedPrize?.title);
     }
 
-    // Защита от бага
     if (targetIndex === -1 || !selectedPrize) {
       console.error("[SPIN] Приз не найден в массиве prizes");
       return;
     }
 
-    // --- Считаем угол поворота ---
     const sectorMid = targetIndex * angleStep + angleStep / 2;
     const targetAngle = (((ARROW_ANGLE - sectorMid) % 360) + 360) % 360;
     const currentAngle = rotation % 360;
@@ -273,11 +307,9 @@ export default function Wheel({
       `[SPIN] приз: "${selectedPrize.title}" | индекс: ${targetIndex} | оборотов: ${fullSpins} | угол: ${newRotation.toFixed(1)}°`,
     );
 
-    // --- Запускаем анимацию ---
     setSpinning(true);
     setRotation(newRotation);
 
-    // По завершении анимации показываем результат
     setTimeout(() => finishSpin(targetIndex), SPIN_DURATION + 100);
   }, [
     spinning,
@@ -324,7 +356,7 @@ export default function Wheel({
   return (
     <div
       className={cn(
-        "relative",
+        "relative w-full h-full flex flex-col items-center justify-center",
         className,
       )}
     >
@@ -343,8 +375,9 @@ export default function Wheel({
 
       {/* Контейнер колеса */}
       <div
-        className={cn(         
-          "p-4 flex-shrink-0 cursor-pointer select-none w-full overflow-hidden",
+        className={cn(
+          "w-full flex-1 min-h-0 flex items-center justify-center relative",
+          "cursor-pointer select-none",
           spinning || disabled ? "cursor-not-allowed" : "cursor-pointer",
         )}
         onClick={handleSpin}
@@ -358,27 +391,24 @@ export default function Wheel({
               : "Кликните чтобы крутить"
         }
       >
-        {/* Красная стрелка-указатель */}
-        <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-          <div className="relative">
-            <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[28px] border-l-transparent border-r-transparent border-t-[#E53935]" />
-            <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[20px] border-l-transparent border-r-transparent border-t-[#B71C1C]" />
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-2 bg-white/40 rounded-full blur-[1px]" />
-          </div>
-        </div>
-
-        {/* SVG колесо */}
         <svg
-          viewBox="0 0 400 400"
-          className="w-full h-full drop-shadow-[0_0_1.5rem_rgba(255,215,0,0.4)]"
+          viewBox="0 0 400 440"
+          className={cn(
+            "w-full h-full max-h-[55vh] drop-shadow-[0_0_1.5rem_rgba(255,215,0,0.4)]",
+            "overflow-visible"
+          )}
           style={{
-            transform: `rotate(${rotation}deg)`,
-            transition: spinning
-              ? `transform ${SPIN_DURATION}ms ease-out`
-              : "none",
+            overflow: "visible",
           }}
         >
           <defs>
+            {/* Градиент для стрелки */}
+            <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#B71C1C" />
+              <stop offset="40%" stopColor="#E53935" />
+              <stop offset="100%" stopColor="#FF6B6B" />
+            </linearGradient>
+
             {[...Array(8)].map((_, i) => (
               <linearGradient
                 key={i}
@@ -405,63 +435,80 @@ export default function Wheel({
             </filter>
           </defs>
 
-          {/* Внешнее золотое кольцо */}
-          <circle
-            cx="200"
-            cy="200"
-            r="195"
-            fill="none"
-            stroke="#FFD700"
-            strokeWidth="8"
-            filter="url(#glow)"
-          />
-          <circle
-            cx="200"
-            cy="200"
-            r="190"
-            fill="none"
-            stroke="#1a1a2e"
-            strokeWidth="2"
-          />
 
-          {/* Сектора с призами */}
-          <WheelSectors prizes={prizes} angleStep={angleStep} />
+          {/* Группа вращающихся элементов */}
+          <g
+            style={{
+              transform: `rotate(${rotation}deg)`,
+              transformOrigin: "200px 200px",
+              transition: spinning
+                ? `transform ${SPIN_DURATION}ms ease-out`
+                : "none",
+            }}
+          >
+            {/* Внешнее золотое кольцо */}
+            <circle
+              cx="200"
+              cy="200"
+              r="195"
+              fill="none"
+              stroke="#FFD700"
+              strokeWidth="8"
+              filter="url(#glow)"
+            />
+            <circle
+              cx="200"
+              cy="200"
+              r="190"
+              fill="none"
+              stroke="#1a1a2e"
+              strokeWidth="2"
+            />
 
-          {/* Центральная кнопка */}
-          <circle
-            cx="200"
-            cy="200"
-            r="35"
-            fill="url(#grad1)"
-            stroke="#1a1a2e"
-            strokeWidth="4"
-          />
+            {/* Сектора с призами */}
+            <WheelSectors prizes={prizes} angleStep={angleStep} />
 
-          <image
-            href="/images/webp/splash-poster-black.webp"
-            x="160"
-            y="160"
-            width="80"
-            height="80"
-            preserveAspectRatio="xMidYMid meet"
-          />
+            {/* Центральная кнопка */}
+            <circle
+              cx="200"
+              cy="200"
+              r="35"
+              fill="url(#grad1)"
+              stroke="#1a1a2e"
+              strokeWidth="4"
+            />
+
+            <image
+              href="/images/webp/splash-poster-black.webp"
+              x="160"
+              y="160"
+              width="80"
+              height="80"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </g>
+          
+          {/* Стрелка (НЕ вращается) */}
+          <WheelArrow />
         </svg>
       </div>
 
       {/* Кнопка вращения */}
-      <Button
-        onClick={handleSpin}
-        disabled={spinning}
-        className={cn(
-          "mb-6 px-8 h-[3rem] text-lg font-bold rounded-full transition-all",
-          disabled
-            ? "bg-gray-500 cursor-not-allowed opacity-50"
-            : "bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 hover:scale-105",
-          "text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
-        )}
-      >
-        {spinning ? "КРУЧУ..." : disabled ? "ЗАБЛОКИРОВАНО" : "КРУТИТЬ"}
-      </Button>
+      <div className="flex-shrink-0 mt-2 mb-8">
+        <Button
+          onClick={handleSpin}
+          disabled={spinning}
+          className={cn(
+            "px-8 h-[3rem] text-lg font-bold rounded-full transition-all",
+            disabled
+              ? "bg-gray-500 cursor-not-allowed opacity-50"
+              : "bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 hover:scale-105",
+            "text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+        >
+          {spinning ? "КРУЧУ..." : disabled ? "ЗАБЛОКИРОВАНО" : "КРУТИТЬ"}
+        </Button>
+      </div>
     </div>
   );
 }

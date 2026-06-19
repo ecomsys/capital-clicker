@@ -9,7 +9,7 @@ const typeColors = {
     border: "border-golden/30",
     activeBorder: "border-golden",
     activeShadow: "rgba(254, 141, 0, 0.5)",
-    bg: "bg-tile ",
+    bg: "bg-white/5 ",
     activeBg: "from-golden/20 to-yellow-500/20",
   },
   gift: {
@@ -17,7 +17,7 @@ const typeColors = {
     border: "border-siniy/30",
     activeBorder: "border-siniy",
     activeShadow: "rgba(127, 53, 255, 0.5)",
-    bg: "bg-tile ",
+    bg: "bg-white/5 ",
     activeBg: "from-siniy/20 to-purple-500/20",
   },
   certificate: {
@@ -25,7 +25,7 @@ const typeColors = {
     border: "border-salat/30",
     activeBorder: "border-salat",
     activeShadow: "rgba(42, 255, 0, 0.5)",
-    bg: "bg-tile ",
+    bg: "bg-white/5 ",
     activeBg: "from-salat/20 to-green-500/20",
   },
 };
@@ -76,7 +76,7 @@ export function PrizeCard({
         isLocked
           ? "cursor-not-allowed"
           : cn(
-              "cursor-pointer hover:bg-white/5",
+              "cursor-pointer hover:bg-white/10",
               isSelected &&
                 cn(
                   `bg-gradient-to-br ${colors.activeBg}`,

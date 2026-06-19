@@ -15,7 +15,7 @@ export default function InstallAppButton() {
       openModal({
         classes: "sm:max-w-4xl",
         content: (
-          <div className="px-4 sm:px-10 space-y-2 text-white font-light">
+          <div className="px-2 sm:px-10 space-y-2 text-white font-light">
             <div className="pt-7 text-center">
               <h3 className="text-xl font-bold mb-3">Установить приложение</h3>
             </div>
@@ -63,8 +63,8 @@ export default function InstallAppButton() {
   };
 
   const buttonClasses = isInstalled
-    ? "flex items-center flex-col sm:flex-row bg-green-600 text-white font-bold rounded-[1rem] px-4 py-2 gap-0.5 sm:gap-3"
-    : "flex items-center flex-col sm:flex-row bg-[linear-gradient(147deg,#ffd901_0%,#ff8801_100%)] text-[#0f0f0f] font-bold rounded-[1rem] px-4 py-2 gap-0.5 sm:gap-3 transition-all hover:scale-[1.02] active:scale-95";
+    ? "p-2 gap-0.35 sm:p-3 sm:gap-3 flex items-center flex-col sm:flex-row bg-green-600 text-white font-bold rounded-[1rem] "
+    : "p-2 gap-0.35 sm:p-3 sm:gap-3 flex items-center flex-col sm:flex-row bg-[linear-gradient(147deg,#ffd901_0%,#ff8801_100%)] text-[#0f0f0f] font-bold rounded-[1rem] transition-all hover:scale-[1.02] active:scale-95";
 
   return (
     <button
@@ -93,7 +93,7 @@ export default function InstallAppButton() {
           />
           <div className="flex flex-col text-center sm:text-left">
             <span className="text-[0.6rem] uppercase">установить</span>
-            <span className="text-[0.75rem] font-bold uppercase">
+            <span className="text-[0.75rem] font-bold uppercase leading-[1.1] sm:leading-[initial]">
               приложение
             </span>
           </div>

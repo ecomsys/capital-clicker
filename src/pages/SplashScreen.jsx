@@ -83,11 +83,12 @@ export default function SplashScreen() {
         КЛИКЕР
       </p>
 
-      <div className="flex-1 flex items-center justify-between">
+      <div className="flex-1 h-full flex flex-col items-center justify-between">
+        <div className="h-[2vh]"></div>
         <div
           onClick={handleStart}
-          className="relative aspect-square rounded-full overflow-hidden h-full w-full mx-auto mb-[10vh]
-          w-[35vh] max-h-[30rem] max-w-[30rem]"
+          className="relative aspect-square rounded-full overflow-hidden flex-1
+          min-h-[14rem] min-w-[14rem] max-h-[35dvh] max-w-[35dvh]"
           // Запрещаем контекстное меню и перетаскивание для всей области клика
           onContextMenu={(e) => e.preventDefault()}
           draggable={false}
@@ -127,6 +128,7 @@ export default function SplashScreen() {
             </button>
           )}
         </div>
+        <div className="h-[19vh]"></div>
       </div>
 
       {/* Прогресс-бар */}

@@ -20,9 +20,9 @@ export default function BottomNavbar() {
     // Базовые классы навбара — вынес для чистоты
   const navbarClasses = cn(
     "mx-auto flex items-center justify-between min-w-[18rem]",
-    "bg-navbar border border-gray-50/20",
+    "bg-navbar border border-gray-50/20 overflow-hidden",
     "w-full rounded-[1.5rem]",
-    "h-[4.3125rem] lg:h-[6.625rem]",
+    "h-[4em] lg:h-[6.625rem]",
     "max-w-[46.625rem]"
   );
 

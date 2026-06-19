@@ -67,9 +67,9 @@ export default function ChatPage() {
   const messagesByDate = groupMessagesByDate();
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="eco-container flex flex-col h-screen h-[100dvh] pt-2 sm:pt-4 lg:pt-7.5">
       {/* Верхняя фиксированная часть */}
-      <div className="shrink-0 pt-2 sm:pt-4 lg:pt-7.5">
+      <div className="shrink-0">
         <AdBanner
           href={adBanner.href}
           title={adBanner.title}

@@ -9,7 +9,8 @@ export default function SuperPrizeBanner({ prize, className = "" }) {
     <div
       onClick={() => navigate("/prize-selection")}
       className={cn(
-        "bg-golden flex items-center justify-center relative w-full h-[3.875rem] rounded-[1rem] overflow-hidden cursor-pointer",
+        "h-[3rem] sm:h-[3.875rem] rounded-[1rem]",
+        "bg-golden flex items-center justify-center relative w-full overflow-hidden cursor-pointer",
         "hover:brightness-105 active:scale-[0.99] transition-all",
         className,
       )}

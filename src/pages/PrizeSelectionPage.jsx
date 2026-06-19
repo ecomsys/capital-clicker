@@ -65,31 +65,30 @@ export default function PrizeSelectionPage() {
   const fullWidthCert = prizes.certificates.filter((p) => p.fullWidth);
 
   return (
-    <div className="h-screen flex flex-col pt-2 sm:pt-4 lg:pt-7.5">
-      <div className="flex-shrink-0 px-4">
-        <AdBanner
-          href="https://example.com"
-          className="bg-white/5 hover:bg-white/10 transition-all rounded-[0.5rem] h-[3.125rem] sm:h-[4.375rem] mb-2 sm:mb-4 lg:mb-5"
-        >
-          <div className="relative w-full h-full">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-[1.25rem] uppercase text-white/30">РЕКЛАМА</span>
-            </div>
+    <div className="eco-container h-screen h-[100dvh] flex flex-col pt-2 sm:pt-4 lg:pt-7.5">
+      <AdBanner
+        href="https://example.com"
+        className="shrink-0 bg-white/5 hover:bg-white/10 transition-all rounded-[0.5rem] 
+        h-[3.125rem] sm:h-[4.375rem] mb-2 sm:mb-4 lg:mb-5">
+          
+        <div className="relative w-full h-full">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-[1.25rem] uppercase text-white/30">
+              РЕКЛАМА
+            </span>
           </div>
-        </AdBanner>
-      </div>
+        </div>
+      </AdBanner>
 
-      <div className="flex-shrink-0 px-4">
-        <BackTitle
-          title="Призы"
-          onBack={handleBack} // динамический переход
-          className="mt-6 mb-4"
-          titleClassName="text-[1.25rem] sm:text-[1.5rem] lg:text-[2rem] mb-2"
-        />
-      </div>
+      <BackTitle
+        title="Призы"
+        onBack={handleBack} // динамический переход
+        className="shrink-0 mt-6 mb-4"
+        titleClassName="text-[1.25rem] sm:text-[1.5rem] lg:text-[2rem] mb-2"
+      />
 
-      <div className="flex-1 overflow-y-auto pb-35 sm:pb-40 lg:pb-50 scrollbar-none">
-        <div className="w-full max-w-[46.625rem] mx-auto px-4">
+      <div className="flex-1 overflow-y-auto scrollbar-none pb-16">
+        <div className="w-full max-w-[46.625rem] mx-auto">
           {/* Секция: Деньги */}
           <PrizesTitle>Деньги</PrizesTitle>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
@@ -149,6 +148,9 @@ export default function PrizeSelectionPage() {
           ))}
         </div>
       </div>
+
+      {/* нижний буфер   */}
+      <div className="shrink-0 h-18 sm:h-22 lg:h-28 "></div>
     </div>
   );
 }

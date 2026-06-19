@@ -51,13 +51,13 @@ export default function HomeActionsGrid() {
   };
 
   return (
-    <div className="w-full flex justify-center min-w-[18rem]">
-      <div className="w-full sm:hidden">
-        <div className="w-full grid grid-cols-3 gap-3 max-w-88.5 mx-auto">
+    <div className="w-full min-w-[18rem]">
+      <div className="flex justify-center sm:hidden">
+        <div className="flex-1 grid grid-cols-3 gap-x-3 gap-y-2 max-w-88.5">
           <TreasureChest
             onClick={handleChestClick}
             progress={chestPercent}
-            className="max-w-[6.875rem] aspect-[110/88] mb-1 cursor-pointer"
+            className="shrink-0 max-w-[6.875rem] aspect-[110/88] mb-1 cursor-pointer"
           />
           <div className="max-w-[6.875rem] aspect-[110/88] mb-1"></div>
           <div className="max-w-[6.875rem] aspect-[110/88] mb-1"></div>
@@ -88,11 +88,11 @@ export default function HomeActionsGrid() {
         </div>
       </div>
 
-      <div className="hidden sm:flex sm:gap-4 w-full mx-auto max-w-159.5">
+      <div className="hidden justify-center sm:flex sm:gap-4 w-full">
         <TreasureChest
           onClick={handleChestClick}
           progress={chestPercent}
-          className="max-w-[9rem] aspect-[144/115] cursor-pointer"
+          className="shrink-0 max-w-[9rem] aspect-[144/115] cursor-pointer"
         />
         <ActionCard
           to="/super-game"
